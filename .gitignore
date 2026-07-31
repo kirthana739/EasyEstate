@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+easyestate.db
+static/uploads/
+.DS_Store
+logs/
+*.log
+venv/
+env/

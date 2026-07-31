@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EasyEstate — Our Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --gold:#d4af37;--gold2:#ffd700;
+  --gold-dim:rgba(212,175,55,0.1);
+  --bg:#070707;--surface:#0f0f0f;--surface2:#141414;
+  --border:rgba(212,175,55,0.15);--text:#f0f0f0;--muted:#555;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);overflow-x:hidden;}
+
+/* ── HEADER ── */
+header{
+  position:fixed;top:0;width:100%;z-index:100;
+  padding:18px 60px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(7,7,7,0.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--gold2);letter-spacing:1px;}
+nav a{color:#888;text-decoration:none;margin-left:28px;font-size:13px;font-weight:300;transition:color 0.2s;}
+nav a:hover{color:var(--gold);}
+nav a.active{color:var(--gold2);font-weight:500;}
+
+/* ── HERO ── */
+.hero{
+  position:relative;height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;text-align:center;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=90') center/cover;
+  transform:scale(1.06);
+  animation:heroZoom 20s ease-in-out infinite alternate;
+}
+@keyframes heroZoom{from{transform:scale(1.06);}to{transform:scale(1.12);}}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(7,7,7,0.4) 0%,rgba(7,7,7,0.6) 60%,rgba(7,7,7,1) 100%);
+}
+.hero-content{position:relative;z-index:2;padding:0 20px;}
+.hero-eyebrow{
+  display:inline-block;font-size:10px;letter-spacing:4px;
+  text-transform:uppercase;color:var(--gold);
+  border:1px solid var(--border);padding:7px 20px;border-radius:30px;
+  background:rgba(212,175,55,0.08);margin-bottom:24px;
+  animation:fadeUp 0.8s ease 0.2s both;
+}
+.hero h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:76px;font-weight:600;color:#fff;line-height:1.0;
+  animation:fadeUp 0.9s ease 0.3s both;
+}
+.hero h1 em{font-style:italic;color:var(--gold2);font-weight:300;}
+.hero-sub{
+  font-size:16px;color:rgba(255,255,255,0.45);font-weight:300;
+  margin:18px auto 0;max-width:540px;line-height:1.75;
+  animation:fadeUp 0.8s ease 0.4s both;
+}
+.scroll-hint{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:rgba(255,255,255,0.2);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  animation:fadeUp 0.8s ease 1s both;
+}
+.scroll-line{width:1px;height:44px;background:linear-gradient(180deg,var(--gold),transparent);animation:lineDown 2s ease infinite;}
+@keyframes lineDown{0%{opacity:0;transform:scaleY(0);transform-origin:top;}50%{opacity:1;transform:scaleY(1);}100%{opacity:0;transform:scaleY(1);transform-origin:bottom;}}
+
+/* ── INTRO STRIP ── */
+.intro{text-align:center;padding:90px 60px 50px;}
+.intro-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:block;}
+.intro h2{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:600;color:var(--text);margin-bottom:14px;}
+.intro p{font-size:15px;color:var(--muted);font-weight:300;max-width:580px;margin:0 auto;line-height:1.8;}
+
+/* ── STATS BAND ── */
+.stats-band{
+  display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  max-width:1000px;margin:0 auto 80px;
+  opacity:0;transform:translateY(30px);
+  transition:opacity 0.8s ease,transform 0.8s ease;
+}
+.stats-band.visible{opacity:1;transform:translateY(0);}
+.stat-item{flex:1;padding:32px 20px;text-align:center;border-right:1px solid var(--border);}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:700;color:var(--gold2);display:block;margin-bottom:5px;}
+.stat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+
+/* ── SERVICE CARDS GRID ── */
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:20px;
+  padding:0 60px 80px;
+  max-width:1300px;
+  margin:0 auto;
+}
+
+.svc-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  opacity:0;transform:translateY(40px);
+  transition:opacity 0.7s ease,transform 0.7s ease,box-shadow 0.3s,border-color 0.3s;
+  cursor:default;
+}
+.svc-card.visible{opacity:1;transform:translateY(0);}
+.svc-card:hover{
+  box-shadow:0 24px 50px rgba(212,175,55,0.12);
+  border-color:rgba(212,175,55,0.4);
+}
+
+/* Image */
+.svc-img{height:220px;overflow:hidden;position:relative;}
+.svc-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease;}
+.svc-card:hover .svc-img img{transform:scale(1.06);}
+.svc-img-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,var(--surface) 100%);
+}
+
+/* Number */
+.svc-number{
+  position:absolute;top:16px;right:16px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:64px;font-weight:700;
+  color:rgba(212,175,55,0.12);line-height:1;
+  pointer-events:none;
+}
+
+/* Body */
+.svc-body{padding:24px 28px 30px;}
+
+.svc-icon{
+  width:48px;height:48px;border-radius:12px;
+  background:var(--gold-dim);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:16px;
+}
+
+.svc-tag{
+  font-size:9px;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:8px;
+  display:flex;align-items:center;gap:8px;
+}
+.svc-tag::before{content:'';width:20px;height:1px;background:var(--gold);opacity:0.5;}
+
+.svc-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:700;color:var(--text);
+  margin-bottom:12px;line-height:1.1;
+}
+.svc-title em{font-style:italic;color:var(--gold2);}
+
+.svc-desc{font-size:14px;color:#888;font-weight:300;line-height:1.8;margin-bottom:20px;}
+
+/* Features */
+.svc-feats{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+.feat{display:flex;align-items:center;gap:10px;font-size:13px;color:#999;font-weight:300;}
+.feat-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;opacity:0.6;}
+
+/* CTA */
+.svc-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 22px;border:1px solid var(--border);
+  border-radius:30px;color:var(--gold);
+  font-size:12px;font-weight:400;text-decoration:none;
+  transition:background 0.2s,border-color 0.2s,transform 0.2s;
+  background:none;cursor:pointer;font-family:'DM Sans',sans-serif;
+}
+.svc-cta:hover{background:var(--gold-dim);border-color:var(--gold);transform:translateX(4px);}
+.svc-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform 0.2s;}
+.svc-cta:hover svg{transform:translateX(3px);}
+
+/* ── WHY US SECTION ── */
+.why-section{
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:80px 60px;
+  margin-bottom:80px;
+}
+.why-section .section-head{text-align:center;margin-bottom:50px;}
+.why-section .section-head h2{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:var(--text);margin-bottom:10px;}
+.why-section .section-head p{font-size:14px;color:var(--muted);font-weight:300;}
+
+.why-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:16px;max-width:1100px;margin:0 auto;
+}
+.why-card{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:14px;padding:28px 22px;
+  opacity:0;transform:translateY(24px);
+  transition:opacity 0.6s ease,transform 0.6s ease,border-color 0.3s;
+}
+.why-card.visible{opacity:1;transform:translateY(0);}
+.why-card:hover{border-color:var(--gold);}
+.why-icon{font-size:28px;margin-bottom:14px;}
+.why-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.why-desc{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;}
+
+/* ── CTA BANNER ── */
+.cta-banner{
+  text-align:center;padding:80px 60px 100px;
+  opacity:0;transform:translateY(30px);
+  transition:opacity 0.8s ease,transform 0.8s ease;
+}
+.cta-banner.visible{opacity:1;transform:translateY(0);}
+.cta-banner h2{font-family:'Cormorant Garamond',serif;font-size:50px;font-weight:600;color:var(--text);margin-bottom:14px;}
+.cta-banner h2 em{font-style:italic;color:var(--gold2);}
+.cta-banner p{font-size:15px;color:var(--muted);font-weight:300;margin-bottom:32px;}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-gold{
+  padding:14px 36px;background:linear-gradient(135deg,#b8860b,var(--gold2));
+  color:#000;border:none;border-radius:30px;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;
+  transition:opacity 0.2s,transform 0.2s;
+}
+.btn-gold:hover{opacity:0.9;transform:translateY(-2px);}
+.btn-outline{
+  padding:14px 36px;background:transparent;
+  border:1px solid var(--border);border-radius:30px;font-size:14px;
+  color:var(--gold);cursor:pointer;font-family:'DM Sans',sans-serif;
+  text-decoration:none;transition:background 0.2s,border-color 0.2s;
+}
+.btn-outline:hover{background:var(--gold-dim);border-color:var(--gold);}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:28px 60px;display:flex;align-items:center;justify-content:space-between;
+}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);font-weight:700;}
+.footer-copy{font-size:12px;color:var(--muted);}
+.footer-nav a{color:var(--muted);text-decoration:none;font-size:12px;margin-left:24px;transition:color 0.2s;}
+.footer-nav a:hover{color:var(--gold);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  header,footer{padding:14px 20px;}
+  .hero h1{font-size:48px;}
+  .intro,.services-grid,.why-section,.cta-banner{padding-left:20px;padding-right:20px;}
+  .stats-band{flex-wrap:wrap;margin:0 20px 60px;}
+  .stat-item{flex:0 0 50%;border-bottom:1px solid var(--border);}
+  footer{flex-direction:column;gap:10px;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">EasyEstate</div>
+  <nav>
+    <a href="/index">Home</a>
+    <a href="/service" class="active">Services</a>
+    <a href="/shop">Properties</a>
+    <a href="/seller">Sell</a>
+    <a href="/contact">Contact</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">What We Offer</div>
+    <h1>Services Built for<br><em>Real Estate</em></h1>
+    <p class="hero-sub">
+      From listing your first property to analysing market prices by area — 
+      EasyEstate provides everything buyers, sellers and renters need in one place.
+    </p>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- INTRO -->
+<div class="intro">
+  <span class="intro-label">Our Platform</span>
+  <h2>End-to-End Property Solutions</h2>
+  <p>
+    EasyEstate is a Mangalore-based real estate platform built by students 
+    to simplify property buying, selling and renting across India — 
+    with real-time analytics, verified listings and direct seller contact.
+  </p>
+</div>
+
+<!-- STATS -->
+<div class="stats-band" id="statsBand">
+  <div class="stat-item"><span class="stat-num">100%</span><span class="stat-lbl">Free to Use</span></div>
+  <div class="stat-item"><span class="stat-num">Live</span><span class="stat-lbl">Price Analytics</span></div>
+  <div class="stat-item"><span class="stat-num">Direct</span><span class="stat-lbl">Seller Contact</span></div>
+  <div class="stat-item"><span class="stat-num">2026</span><span class="stat-lbl">Launched</span></div>
+</div>
+
+<!-- SERVICES GRID -->
+<div class="services-grid">
+
+  <!-- 1. Property Listing -->
+  <div class="svc-card">
+    <div class="svc-img">
+      <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=90" alt="Property Listing">
+      <div class="svc-img-overlay"></div>
+      <div class="svc-number">01</div>
+    </div>
+    <div class="svc-body">
+      <div class="svc-icon">🏠</div>
+      <div class="svc-tag">Seller Panel</div>
+      <div class="svc-title">Property<br><em>Listing</em></div>
+      <p class="svc-desc">
+        Sellers can add their apartments, villas, houses and commercial spaces 
+        directly through our Seller Panel. Upload photos, set your price and 
+        reach thousands of verified buyers instantly.
+      </p>
+      <div class="svc-feats">
+        <div class="feat"><div class="feat-dot"></div>Add title, location, type & price</div>
+        <div class="feat"><div class="feat-dot"></div>Upload multiple HD property photos</div>
+        <div class="feat"><div class="feat-dot"></div>Listed instantly on the Shop page</div>
+        <div class="feat"><div class="feat-dot"></div>Email confirmation sent to seller</div>
+      </div>
+      <a href="/seller" class="svc-cta">
+        List Your Property
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. Property Search -->
+  <div class="svc-card">
+    <div class="svc-img">
+      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=90" alt="Property Search">
+      <div class="svc-img-overlay"></div>
+      <div class="svc-number">02</div>
+    </div>
+    <div class="svc-body">
+      <div class="svc-icon">🔍</div>
+      <div class="svc-tag">Shop Page</div>
+      <div class="svc-title">Property<br><em>Search</em></div>
+      <p class="svc-desc">
+        Buyers can browse all listed properties in our Shop. Filter by type, 
+        location and bedrooms. View full details, seller contact and photo 
+        galleries — then register interest in one click.
+      </p>
+      <div class="svc-feats">
+        <div class="feat"><div class="feat-dot"></div>Filter by type, beds & location</div>
+        <div class="feat"><div class="feat-dot"></div>View HD photos with image carousel</div>
+        <div class="feat"><div class="feat-dot"></div>See seller name & phone number</div>
+        <div class="feat"><div class="feat-dot"></div>Register interest instantly</div>
+      </div>
+      <a href="/shop" class="svc-cta">
+        Browse Properties
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- 3. Price Analytics -->
+  <div class="svc-card">
+    <div class="svc-img">
+      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=90" alt="Analytics">
+      <div class="svc-img-overlay"></div>
+      <div class="svc-number">03</div>
+    </div>
+    <div class="svc-body">
+      <div class="svc-icon">📊</div>
+      <div class="svc-tag">Analytics</div>
+      <div class="svc-title">Price<br><em>Analytics</em></div>
+      <p class="svc-desc">
+        Our live bar graph shows average property prices per area — 
+        updated in real time as sellers add listings. Compare areas, 
+        identify trends and make smarter buying or investment decisions.
+      </p>
+      <div class="svc-feats">
+        <div class="feat"><div class="feat-dot"></div>Average price per location</div>
+        <div class="feat"><div class="feat-dot"></div>Stacked bar chart — teal vs grey</div>
+        <div class="feat"><div class="feat-dot"></div>Auto-refreshes every 20 seconds</div>
+        <div class="feat"><div class="feat-dot"></div>Compare property types by price</div>
+      </div>
+      <a href="/bargraph" class="svc-cta">
+        View Analytics
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- 4. User Accounts -->
+  <div class="svc-card">
+    <div class="svc-img">
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=90" alt="User Accounts">
+      <div class="svc-img-overlay"></div>
+      <div class="svc-number">04</div>
+    </div>
+    <div class="svc-body">
+      <div class="svc-icon">👤</div>
+      <div class="svc-tag">Accounts</div>
+      <div class="svc-title">User<br><em>Registration</em></div>
+      <p class="svc-desc">
+        Create a free account to access all EasyEstate features. 
+        Secure login with email and password, profile management, 
+        and a welcome email sent on registration.
+      </p>
+      <div class="svc-feats">
+        <div class="feat"><div class="feat-dot"></div>Free account creation</div>
+        <div class="feat"><div class="feat-dot"></div>Secure email + password login</div>
+        <div class="feat"><div class="feat-dot"></div>Profile photo upload</div>
+        <div class="feat"><div class="feat-dot"></div>Welcome email on signup</div>
+      </div>
+      <a href="/registerpage" class="svc-cta">
+        Create Account
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- 5. Contact & Support -->
+  <div class="svc-card">
+    <div class="svc-img">
+      <img src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=800&q=90" alt="Contact Support">
+      <div class="svc-img-overlay"></div>
+      <div class="svc-number">05</div>
+    </div>
+    <div class="svc-body">
+      <div class="svc-icon">📬</div>
+      <div class="svc-tag">Support</div>
+      <div class="svc-title">Contact<br><em>& Support</em></div>
+      <p class="svc-desc">
+        Have a question about a property or need help with the platform? 
+        Send us a message through our contact form. All messages are 
+        stored and reviewed by our team from Mangalore.
+      </p>
+      <div class="svc-feats">
+        <div class="feat"><div class="feat-dot"></div>Contact form with instant storage</div>
+        <div class="feat"><div class="feat-dot"></div>Messages saved to database</div>
+        <div class="feat"><div class="feat-dot"></div>Team based in Mangalore, India</div>
+        <div class="feat"><div class="feat-dot"></div>Reply within 24 hours</div>
+      </div>
+      <a href="/contact" class="svc-cta">
+        Contact Us
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- 6. Admin Dashboard -->
+  <div class="svc-card">
+    <div class="svc-img">
+      <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=90" alt="Admin Dashboard">
+      <div class="svc-img-overlay"></div>
+      <div class="svc-number">06</div>
+    </div>
+    <div class="svc-body">
+      <div class="svc-icon">🔐</div>
+      <div class="svc-tag">Admin</div>
+      <div class="svc-title">Admin<br><em>Dashboard</em></div>
+      <p class="svc-desc">
+        Our secure admin panel gives the EasyEstate team full control — 
+        view all contact messages, manage property listings, monitor 
+        registered users and delete records with one click.
+      </p>
+      <div class="svc-feats">
+        <div class="feat"><div class="feat-dot"></div>Password-protected admin login</div>
+        <div class="feat"><div class="feat-dot"></div>View all messages & properties</div>
+        <div class="feat"><div class="feat-dot"></div>Manage registered users</div>
+        <div class="feat"><div class="feat-dot"></div>Lockout after 3 failed attempts</div>
+      </div>
+      <a href="/admin" class="svc-cta">
+        Admin Panel
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- WHY US -->
+<div class="why-section">
+  <div class="section-head">
+    <h2>Why Choose EasyEstate?</h2>
+    <p>Built by students, designed for everyone — simple, fast and completely free</p>
+  </div>
+  <div class="why-grid" id="whyGrid">
+    <div class="why-card"><div class="why-icon">💸</div><div class="why-title">100% Free</div><div class="why-desc">No listing fees, no hidden charges. List and search properties completely free.</div></div>
+    <div class="why-card"><div class="why-icon">⚡</div><div class="why-title">Instant Listing</div><div class="why-desc">Add a property in the Seller Panel and it appears on the Shop page immediately.</div></div>
+    <div class="why-card"><div class="why-icon">📍</div><div class="why-title">Mangalore Focused</div><div class="why-desc">Built specifically for the local real estate market by a Mangalore-based team.</div></div>
+    <div class="why-card"><div class="why-icon">📸</div><div class="why-title">Real Photos</div><div class="why-desc">Sellers upload actual property photos — stored on our Flask server, not links.</div></div>
+    <div class="why-card"><div class="why-icon">📊</div><div class="why-title">Live Analytics</div><div class="why-desc">Bar graph of price by area refreshes every 20 seconds with the latest data.</div></div>
+    <div class="why-card"><div class="why-icon">🔒</div><div class="why-title">Secure Platform</div><div class="why-desc">Admin panel protected by login + lockout system. User data stored safely in SQLite.</div></div>
+  </div>
+</div>
+
+<!-- CTA BANNER -->
+<div class="cta-banner" id="ctaBanner">
+  <h2>Ready to Find Your<br><em>Dream Property?</em></h2>
+  <p>Browse listings, list your property or contact our team — all in one place</p>
+  <div class="cta-btns">
+    <a href="/shop"     class="btn-gold">Browse Properties →</a>
+    <a href="/seller"   class="btn-outline">List a Property</a>
+    <a href="/contact"  class="btn-outline">Contact Us</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">EasyEstate</div>
+  <div class="footer-copy">© 2026 EasyEstate | Mangalore, Karnataka</div>
+  <div class="footer-nav">
+    <a href="/index">Home</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add("visible");
+      // Stagger why cards
+      if(e.target.id==="whyGrid"){
+        document.querySelectorAll(".why-card").forEach((c,i)=>{
+          setTimeout(()=>c.classList.add("visible"), i*80);
+        });
+      }
+    }
+  });
+},{threshold:0.12});
+
+document.querySelectorAll(".svc-card,.stats-band,.cta-banner,#whyGrid").forEach(el=>observer.observe(el));
+
+// Stagger service cards
+const svcCards = document.querySelectorAll(".svc-card");
+const svcObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add("visible");
+      svcObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.1});
+svcCards.forEach((c,i)=>{
+  c.style.transitionDelay = (i%3)*0.1+"s";
+  svcObs.observe(c);
+});
+</script>
+
+</body>
+</html>

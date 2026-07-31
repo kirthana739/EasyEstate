@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EasyEstate — My Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#d4af37;--gold2:#ffd700;--gold-dim:rgba(212,175,55,0.12);
+  --bg:#080808;--surface:#111;--surface2:#161616;
+  --border:rgba(212,175,55,0.18);--text:#f0f0f0;--muted:#666;--green:#22c55e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;}
+
+/* ── NAVBAR ── */
+header{
+  position:sticky;top:0;z-index:100;
+  padding:16px 60px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(8,8,8,0.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--gold2);letter-spacing:1px;}
+nav a{color:#aaa;text-decoration:none;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:300;transition:color 0.2s,background 0.2s;}
+nav a:hover{color:var(--gold);background:var(--gold-dim);}
+.nav-btn{background:var(--gold-dim)!important;border:1px solid var(--border)!important;color:var(--gold)!important;font-weight:500!important;}
+
+/* ── LAYOUT ── */
+.page-wrap{max-width:960px;margin:0 auto;padding:50px 24px 80px;}
+
+/* ── LOADING ── */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;}
+.spinner{width:44px;height:44px;border:3px solid rgba(212,175,55,0.15);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:14px;color:var(--muted);}
+
+/* ── NOT LOGGED IN ── */
+.not-logged{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:20px;text-align:center;}
+.not-logged .nl-icon{font-size:60px;opacity:0.25;}
+.not-logged h2{font-family:'Cormorant Garamond',serif;font-size:34px;color:var(--text);}
+.not-logged p{font-size:14px;color:var(--muted);}
+.gold-btn{display:inline-block;padding:13px 32px;background:linear-gradient(135deg,#b8860b,var(--gold2));color:#000;text-decoration:none;border-radius:30px;font-size:14px;font-weight:700;margin-top:6px;transition:opacity 0.2s;}
+.gold-btn:hover{opacity:0.88;}
+
+/* ── PROFILE HEADER ── */
+.profile-header{
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:36px 40px;display:flex;align-items:center;gap:32px;
+  margin-bottom:22px;position:relative;overflow:hidden;
+  animation:fadeUp 0.55s ease both;
+}
+.profile-header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.profile-header::after{content:'';position:absolute;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.05),transparent 70%);right:-80px;top:-80px;pointer-events:none;}
+
+.avatar-circle{
+  width:96px;height:96px;border-radius:50%;
+  background:var(--gold-dim);border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:700;color:var(--gold2);
+  flex-shrink:0;box-shadow:0 0 28px rgba(212,175,55,0.2);position:relative;z-index:1;
+}
+.profile-info{flex:1;position:relative;z-index:1;}
+.profile-name{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.profile-email{font-size:14px;color:var(--gold);margin-bottom:10px;}
+.verified-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.28);color:var(--green);padding:4px 12px;border-radius:20px;font-size:11px;letter-spacing:1px;text-transform:uppercase;}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s ease infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.profile-joined{font-size:12px;color:var(--muted);margin-top:8px;}
+.header-actions{display:flex;flex-direction:column;gap:10px;align-items:flex-end;position:relative;z-index:1;}
+.edit-btn{padding:10px 22px;background:var(--gold-dim);border:1px solid var(--border);color:var(--gold);border-radius:8px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;white-space:nowrap;}
+.edit-btn:hover{background:rgba(212,175,55,0.2);}
+.logout-link{padding:10px 22px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;border-radius:8px;font-size:13px;text-decoration:none;text-align:center;white-space:nowrap;transition:background 0.2s;}
+.logout-link:hover{background:rgba(239,68,68,0.16);}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px;animation:fadeUp 0.55s ease 0.08s both;}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;transition:border-color 0.25s;}
+.stat-box:hover{border-color:rgba(212,175,55,0.5);}
+.stat-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.stat-value{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:var(--gold2);}
+.stat-sub{font-size:12px;color:var(--muted);margin-top:4px;}
+
+/* ── DETAIL CARDS ── */
+.details-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;animation:fadeUp 0.55s ease 0.14s both;}
+.detail-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 28px;}
+.card-heading{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.detail-row:last-child{border-bottom:none;}
+.dkey{font-size:12px;color:var(--muted);}
+.dval{font-size:14px;color:var(--text);font-weight:500;text-align:right;}
+.dval.gold{color:var(--gold);}
+.dval.green{color:var(--green);}
+.dval.dim{color:var(--muted);font-size:12px;}
+
+/* ── EDIT FORM ── */
+.edit-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 32px;margin-bottom:22px;display:none;animation:fadeUp 0.35s ease both;}
+.edit-card.show{display:block;}
+.edit-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text);margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.ef{display:flex;flex-direction:column;gap:6px;}
+.ef.full{grid-column:span 2;}
+.ef label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.ef input{padding:12px 15px;background:var(--surface2);border:1px solid rgba(255,255,255,0.07);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.ef input::placeholder{color:#2a2a2a;}
+.ef input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,0.08);}
+.ef input:disabled{opacity:0.4;cursor:not-allowed;}
+.ef .hint{font-size:11px;color:var(--muted);margin-top:2px;}
+.edit-actions{display:flex;gap:10px;margin-top:20px;}
+.save-btn{padding:12px 28px;background:linear-gradient(135deg,#b8860b,var(--gold2));color:#000;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s;}
+.save-btn:hover{opacity:0.9;}
+.save-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.cancel-btn{padding:12px 22px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color 0.2s,color 0.2s;}
+.cancel-btn:hover{border-color:var(--gold);color:var(--gold);}
+.spinner-sm{display:inline-block;width:13px;height:13px;border:2px solid rgba(0,0,0,0.2);border-top-color:#000;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
+
+/* ── QUICK ACTIONS ── */
+.quick-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 28px;margin-bottom:22px;animation:fadeUp 0.55s ease 0.2s both;}
+.quick-links{display:flex;gap:12px;flex-wrap:wrap;padding-top:10px;}
+.quick-link{padding:10px 20px;background:var(--gold-dim);border:1px solid var(--border);color:var(--gold);border-radius:8px;text-decoration:none;font-size:13px;transition:background 0.2s,border-color 0.2s;}
+.quick-link:hover{background:rgba(212,175,55,0.2);border-color:rgba(212,175,55,0.5);}
+
+/* ── LISTINGS ── */
+.listings-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 28px;animation:fadeUp 0.55s ease 0.25s both;}
+.listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:16px;}
+.listing-item{background:var(--surface2);border:1px solid rgba(255,255,255,0.05);border-radius:10px;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+.listing-item:hover{border-color:rgba(212,175,55,0.35);transform:translateY(-3px);}
+.listing-img{height:130px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;}
+.listing-img img{width:100%;height:100%;object-fit:cover;}
+.listing-body{padding:12px 14px;}
+.listing-title{font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.listing-loc{font-size:11px;color:var(--muted);margin-bottom:6px;}
+.listing-price{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold2);font-weight:700;}
+.listing-status{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:6px;font-weight:600;letter-spacing:0.5px;}
+.status-active{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25);}
+.status-hidden{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2);}
+.empty-state{text-align:center;padding:36px 20px;color:var(--muted);}
+.empty-state .eicon{font-size:40px;opacity:0.2;margin-bottom:10px;}
+.empty-state p{font-size:13px;margin-bottom:10px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 26px;border-radius:30px;font-size:13px;box-shadow:0 8px 30px rgba(0,0,0,0.5);transition:transform 0.4s ease;z-index:9999;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{border-color:rgba(34,197,94,0.4);color:var(--green);}
+.toast.error{border-color:rgba(239,68,68,0.3);color:#f87171;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+
+@media(max-width:768px){
+  header{padding:14px 20px;}
+  .page-wrap{padding:28px 16px 60px;}
+  .profile-header{flex-direction:column;text-align:center;padding:28px 20px;gap:20px;}
+  .profile-info{display:flex;flex-direction:column;align-items:center;}
+  .header-actions{flex-direction:row;width:100%;justify-content:center;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .details-row{grid-template-columns:1fr;}
+  .edit-grid{grid-template-columns:1fr;}
+  .ef.full{grid-column:span 1;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header>
+  <div class="nav-logo">EasyEstate</div>
+  <nav>
+    <a href="/index">Home</a>
+    <a href="/shop">Properties</a>
+    <a href="/seller">Sell</a>
+    <a href="/contact">Contact</a>
+    <a href="/bargraph">Analytics</a>
+    <a href="/logout" class="nav-btn">Logout</a>
+  </nav>
+</header>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- PAGE -->
+<div class="page-wrap" id="pageWrap">
+  <div class="loading-wrap">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading your profile…</div>
+  </div>
+</div>
+
+<script>
+let currentUser = null;
+
+/* ─── INIT ─── */
+async function loadProfile() {
+  try {
+    const res = await fetch('/api/me');
+    if (res.status === 401) { renderNotLoggedIn(); return; }
+    const u = await res.json();
+    if (u.error) { renderNotLoggedIn(); return; }
+    currentUser = u;
+    renderProfile(u);
+  } catch(e) {
+    document.getElementById('pageWrap').innerHTML = `
+      <div class="not-logged">
+        <div class="nl-icon">s</sdiv>
+        <h2>Server not reachable</h2>
+        <p>Make sure Flask is running on port 5000.</p>
+        <a href="/index" class="gold-btn">← Back to Home</a>
+      </div>`;
+  }
+}
+
+function renderNotLoggedIn() {
+  document.getElementById('pageWrap').innerHTML = `
+    <div class="not-logged">
+      <div class="nl-icon"></div>
+      <h2>You're not logged in</h2>
+      <p>Please sign in to view your profile and manage your account.</p>
+      <a href="/loginpage" class="gold-btn">Sign In →</a>
+    </div>`;
+}
+
+/* ─── HELPERS ─── */
+function initials(name) {
+  if (!name) return '?';
+  const p = name.trim().split(' ').filter(Boolean);
+  return p.length >= 2 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : p[0][0].toUpperCase();
+}
+function fmtDate(dt) {
+  if (!dt) return '—';
+  return new Date(dt).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+}
+function fmtPrice(v) {
+  if (!v) return '₹0';
+  v = Number(v);
+  if (v >= 10000000) return '₹'+(v/10000000).toFixed(2)+' Cr';
+  if (v >= 100000)   return '₹'+(v/100000).toFixed(1)+' L';
+  return '₹'+v.toLocaleString('en-IN');
+}
+
+/* ─── RENDER PROFILE ─── */
+function renderProfile(u) {
+  const ini    = initials(u.name);
+  const joined = fmtDate(u.created_at);
+
+  document.getElementById('pageWrap').innerHTML = `
+
+    <!-- HEADER CARD -->
+    <div class="profile-header">
+      <div class="avatar-circle" id="avatarEl">${ini}</div>
+      <div class="profile-info">
+        <div class="profile-name" id="dispName">${u.name || '—'}</div>
+        <div class="profile-email">${u.email || '—'}</div>
+        <div class="verified-badge"><div class="badge-dot"></div> Verified Member</div>
+        <div class="profile-joined">Member since ${joined}</div>
+      </div>
+      <div class="header-actions">
+        <button class="edit-btn" onclick="toggleEdit()"> Edit Profile</button>
+        <a href="/logout" class="logout-link">Logout</a>
+      </div>
+    </div>
+
+    <!-- EDIT FORM -->
+    <div class="edit-card" id="editCard">
+      <div class="edit-title">Edit Your Details</div>
+      <div class="edit-grid">
+        <div class="ef">
+          <label>Full Name</label>
+          <input type="text" id="eName" value="${u.name||''}" placeholder="Your full name">
+        </div>
+        <div class="ef">
+          <label>Phone Number</label>
+          <input type="tel" id="ePhone" value="${u.phone||''}" placeholder="+91 98765 43210">
+        </div>
+        <div class="ef full">
+          <label>Email Address</label>
+          <input type="email" value="${u.email||''}" disabled>
+          <span class="hint">Email cannot be changed after registration.</span>
+        </div>
+        <div class="ef">
+          <label>New Password</label>
+          <input type="password" id="ePass" placeholder="Leave blank to keep current">
+        </div>
+        <div class="ef">
+          <label>Confirm New Password</label>
+          <input type="password" id="ePass2" placeholder="Repeat new password">
+        </div>
+      </div>
+      <div class="edit-actions">
+        <button class="save-btn" id="saveBtn" onclick="saveProfile()">Save Changes</button>
+        <button class="cancel-btn" onclick="toggleEdit()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-label">Account ID</div>
+        <div class="stat-value" style="font-size:26px">#${String(u.id).padStart(4,'0')}</div>
+        <div class="stat-sub">Unique identifier</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Properties Listed</div>
+        <div class="stat-value" id="statListings">—</div>
+        <div class="stat-sub">Via Seller Panel</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Member Since</div>
+        <div class="stat-value" style="font-size:18px;padding-top:6px">${joined}</div>
+        <div class="stat-sub">Registration date</div>
+      </div>
+    </div>
+
+    <!-- DETAIL CARDS -->
+    <div class="details-row">
+      <div class="detail-card">
+        <div class="card-heading"> Personal Information</div>
+        <div class="detail-row">
+          <span class="dkey">Full Name</span>
+          <span class="dval" id="infoName">${u.name||'—'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="dkey">Email</span>
+          <span class="dval gold">${u.email||'—'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="dkey">Phone</span>
+          <span class="dval" id="infoPhone">${u.phone||'Not provided'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="dkey">Password</span>
+          <span class="dval dim">••••••••</span>
+        </div>
+      </div>
+      <div class="detail-card">
+        <div class="card-heading">Account Status</div>
+        <div class="detail-row">
+          <span class="dkey">Status</span>
+          <span class="dval green">✓ Active</span>
+        </div>
+        <div class="detail-row">
+          <span class="dkey">Account Type</span>
+          <span class="dval">Standard Member</span>
+        </div>
+        <div class="detail-row">
+          <span class="dkey">Joined</span>
+          <span class="dval">${joined}</span>
+        </div>
+        <div class="detail-row">
+          <span class="dkey">Last Login</span>
+          <span class="dval dim">This session</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="quick-card">
+      <div class="card-heading"> Quick Actions</div>
+      <div class="quick-links">
+        <a href="/shop"     class="quick-link"> Browse Properties</a>
+        <a href="/seller"   class="quick-link"> List a Property</a>
+        <a href="/contact"  class="quick-link"> Contact Support</a>
+        <a href="/bargraph" class="quick-link"> Analytics</a>
+        <a href="/about"    class="quick-link"> About Us</a>
+      </div>
+    </div>
+
+    <!-- MY LISTINGS -->
+    <div class="listings-card">
+      <div class="card-heading"> My Property Listings</div>
+      <div id="listingsArea">
+        <div class="loading-wrap" style="min-height:120px">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  loadListings(u.email);
+}
+
+/* ─── LOAD LISTINGS ─── */
+async function loadListings(email) {
+  try {
+    const res  = await fetch('/api/properties');
+    const all  = await res.json();
+    const mine = all.filter(p => p.seller_email === email);
+
+    const stat = document.getElementById('statListings');
+    if (stat) stat.textContent = mine.length;
+
+    const area = document.getElementById('listingsArea');
+    if (!area) return;
+
+    if (mine.length === 0) {
+      area.innerHTML = `
+        <div class="empty-state">
+          <div class="eicon"></div>
+          <p>You haven't listed any properties yet.</p>
+          <a href="/seller" class="quick-link" style="display:inline-block;margin-top:8px">+ List Your First Property</a>
+        </div>`;
+      return;
+    }
+
+    area.innerHTML = `<div class="listings-grid">${mine.map(p => {
+      const img    = p.images && p.images.length ? `<img src="${p.images[0]}" alt="">` : '🏠';
+      const active = p.is_active !== 0;
+      return `
+        <div class="listing-item">
+          <div class="listing-img">${img}</div>
+          <div class="listing-body">
+            <div class="listing-title">${p.title}</div>
+            <div class="listing-loc"> ${p.location}</div>
+            <div class="listing-price">${fmtPrice(p.price)}</div>
+            <span class="listing-status ${active?'status-active':'status-hidden'}">
+              ${active?'● Active':'● Hidden'}
+            </span>
+          </div>
+        </div>`;
+    }).join('')}</div>`;
+
+  } catch(e) {
+    const area = document.getElementById('listingsArea');
+    if (area) area.innerHTML = `<div class="empty-state"><p>Could not load listings.</p></div>`;
+  }
+}
+
+/* ─── TOGGLE EDIT ─── */
+function toggleEdit() {
+  const card = document.getElementById('editCard');
+  card.classList.toggle('show');
+  if (card.classList.contains('show'))
+    card.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ─── SAVE PROFILE ─── */
+async function saveProfile() {
+  const name  = document.getElementById('eName').value.trim();
+  const phone = document.getElementById('ePhone').value.trim();
+  const pass  = document.getElementById('ePass').value;
+  const pass2 = document.getElementById('ePass2').value;
+  const btn   = document.getElementById('saveBtn');
+
+  if (!name)                  { showToast('Name cannot be empty','error'); return; }
+  if (pass && pass !== pass2) { showToast('Passwords do not match','error'); return; }
+  if (pass && pass.length<6)  { showToast('Password must be 6+ characters','error'); return; }
+
+  btn.disabled  = true;
+  btn.innerHTML = '<span class="spinner-sm"></span>Saving…';
+
+  try {
+    const body = { name, phone };
+    if (pass) body.password = pass;
+
+    const res    = await fetch('/api/update_profile',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    const result = await res.json();
+
+    if (result.error) {
+      showToast(result.error,'error');
+      btn.disabled=false; btn.innerHTML='Save Changes'; return;
+    }
+
+    // Live update UI
+    document.getElementById('avatarEl').textContent  = initials(name);
+    document.getElementById('dispName').textContent  = name;
+    document.getElementById('infoName').textContent  = name;
+    document.getElementById('infoPhone').textContent = phone || 'Not provided';
+    document.getElementById('ePass').value  = '';
+    document.getElementById('ePass2').value = '';
+
+    btn.disabled=false; btn.innerHTML='Save Changes';
+    toggleEdit();
+    showToast('✓ Profile updated successfully','success');
+
+  } catch(e) {
+    showToast('Could not reach server','error');
+    btn.disabled=false; btn.innerHTML='Save Changes';
+  }
+}
+
+/* ─── TOAST ─── */
+function showToast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className   = 'toast show ' + type;
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>{ el.className='toast '+type; }, 3200);
+}
+
+loadProfile();
+</script>
+</body>
+</html>

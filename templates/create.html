@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EasyEstate — Create Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --gold:#d4af37;
+  --gold2:#ffd700;
+  --gold-dim:rgba(212,175,55,0.1);
+  --bg:#070707;
+  --surface:#0f0f0f;
+  --surface2:#161616;
+  --border:rgba(212,175,55,0.18);
+  --text:#f2f2f2;
+  --muted:#5a5a5a;
+  --green:#22c55e;
+  --green-dim:rgba(34,197,94,0.1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;}
+
+body{
+  background:var(--bg);
+  font-family:'DM Sans',sans-serif;
+  display:flex;
+}
+
+.page{
+  display:flex;
+  width:100vw;
+  height:100vh;
+  animation:pageIn 1s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes pageIn{
+  from{opacity:0;transform:scale(0.98);}
+  to{opacity:1;transform:scale(1);}
+}
+.page.flip{animation:flipAway 0.7s cubic-bezier(0.4,0,1,1) forwards;}
+@keyframes flipAway{
+  to{opacity:0;transform:rotateY(8deg) scale(0.96);}
+}
+
+.panel-img{
+  width:58%;
+  position:relative;
+  overflow:hidden;
+  flex-shrink:0;
+}
+
+.img-bg{
+  position:absolute;inset:0;
+  background:
+    url('https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1400&q=90&fit=crop')
+    center/cover no-repeat;
+  transform:scale(1.04);
+  animation:slowZoom 18s ease-in-out infinite alternate;
+}
+@keyframes slowZoom{
+  from{transform:scale(1.04);}
+  to{transform:scale(1.1);}
+}
+
+.img-overlay{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(
+      110deg,
+      rgba(0,0,0,0.08) 0%,
+      rgba(0,0,0,0.2) 40%,
+      rgba(0,0,0,0.65) 100%
+    );
+}
+
+.img-edge{
+  position:absolute;right:0;top:0;bottom:0;
+  width:1px;
+  background:linear-gradient(180deg,transparent,rgba(212,175,55,0.4),transparent);
+}
+
+.img-content{
+  position:relative;z-index:2;
+  height:100%;
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+  padding:52px 56px;
+}
+
+.img-badge{
+  display:inline-flex;align-items:center;gap:9px;
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(212,175,55,0.28);
+  border-radius:40px;
+  padding:10px 22px;
+  width:fit-content;
+}
+.badge-pulse{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px rgba(34,197,94,0.6);
+  animation:pulse 2s ease infinite;
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1);opacity:1;}
+  50%{transform:scale(1.3);opacity:0.6;}
+}
+.img-badge span{
+  font-size:11px;letter-spacing:2.5px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.75);
+  font-weight:400;
+}
+
+.img-footer h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:64px;font-weight:600;
+  color:#fff;line-height:1.0;
+  margin-bottom:16px;
+  text-shadow:0 4px 30px rgba(0,0,0,0.4);
+}
+.img-footer h1 em{
+  font-style:italic;color:var(--gold2);
+  font-weight:300;
+}
+
+.img-sep{
+  width:70px;height:1.5px;
+  background:linear-gradient(90deg,var(--gold),rgba(212,175,55,0.2));
+  margin-bottom:18px;
+}
+
+.img-footer p{
+  font-size:15px;color:rgba(255,255,255,0.45);
+  font-weight:300;line-height:1.8;
+  max-width:380px;
+}
+
+.img-stats{
+  display:flex;gap:32px;margin-top:28px;
+}
+.stat{border-left:2px solid rgba(212,175,55,0.3);padding-left:14px;}
+.stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:700;color:var(--gold2);
+}
+.stat-lbl{
+  font-size:11px;color:rgba(255,255,255,0.35);
+  letter-spacing:1px;text-transform:uppercase;margin-top:2px;
+}
+
+.panel-form{
+  flex:1;
+  background:var(--surface);
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  justify-content:center;
+  padding:48px 64px;
+  overflow-y:auto;
+}
+
+.panel-form::-webkit-scrollbar{width:4px;}
+.panel-form::-webkit-scrollbar-track{background:transparent;}
+.panel-form::-webkit-scrollbar-thumb{background:rgba(212,175,55,0.2);border-radius:2px;}
+
+.form-eyebrow{
+  font-size:10px;letter-spacing:3.5px;
+  text-transform:uppercase;color:var(--gold);
+  margin-bottom:12px;
+  animation:up 0.6s ease 0.2s both;
+}
+
+.form-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:48px;font-weight:700;
+  color:var(--text);line-height:1.0;
+  margin-bottom:8px;
+  animation:up 0.7s ease 0.3s both;
+}
+
+.form-sub{
+  font-size:14px;color:var(--muted);
+  font-weight:300;margin-bottom:30px;
+  animation:up 0.6s ease 0.4s both;
+}
+
+.msg{
+  border-radius:10px;padding:12px 16px;
+  font-size:13px;margin-bottom:18px;
+  display:none;animation:shake 0.4s ease;
+}
+.msg.err{
+  background:rgba(255,80,80,0.07);
+  border:1px solid rgba(255,80,80,0.22);
+  color:#ff6b6b;
+}
+.msg.ok{
+  background:rgba(34,197,94,0.07);
+  border:1px solid rgba(34,197,94,0.22);
+  color:#4ade80;
+}
+.msg.show{display:block;}
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-7px);}
+  40%{transform:translateX(7px);}
+  60%{transform:translateX(-4px);}
+  80%{transform:translateX(4px);}
+}
+
+.row2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.field{
+  margin-bottom:16px;
+  animation:up 0.6s ease both;
+}
+.field:nth-child(1){animation-delay:0.35s;}
+.field:nth-child(2){animation-delay:0.4s;}
+.field:nth-child(3){animation-delay:0.45s;}
+.field:nth-child(4){animation-delay:0.5s;}
+.field:nth-child(5){animation-delay:0.55s;}
+
+.field label{
+  display:block;font-size:10px;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:7px;
+}
+
+/* Phone hint text */
+.field .hint{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:5px;
+  display:none;
+}
+.field input.invalid ~ .hint{display:block;color:#ff6b6b;}
+
+.field input{
+  width:100%;padding:13px 16px;
+  background:var(--surface2);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px;
+  color:var(--text);font-size:14px;
+  font-family:'DM Sans',sans-serif;
+  outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;
+}
+.field input::placeholder{color:#252525;}
+.field input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(212,175,55,0.08);
+  background:#111;
+}
+.field input.valid{border-color:rgba(34,197,94,0.4);}
+.field input.invalid{border-color:rgba(255,80,80,0.4);}
+
+.submit-btn{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,#1a7a35,var(--green));
+  color:#fff;border:none;
+  border-radius:11px;font-size:15px;
+  font-weight:600;letter-spacing:0.5px;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  position:relative;overflow:hidden;
+  transition:opacity 0.2s,transform 0.15s;
+  margin-top:4px;
+  animation:up 0.6s ease 0.6s both;
+}
+.submit-btn::before{
+  content:'';
+  position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
+  transition:left 0.5s ease;
+}
+.submit-btn:hover:not(:disabled)::before{left:150%;}
+.submit-btn:hover:not(:disabled){opacity:0.92;transform:translateY(-1px);}
+.submit-btn:disabled{opacity:0.45;cursor:not-allowed;}
+
+.spinner{
+  display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(255,255,255,0.25);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin 0.7s linear infinite;
+  vertical-align:middle;margin-right:8px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.divider{
+  display:flex;align-items:center;gap:12px;
+  margin:18px 0;
+  animation:up 0.6s ease 0.65s both;
+}
+.div-line{flex:1;height:1px;background:rgba(255,255,255,0.05);}
+.div-txt{font-size:11px;color:var(--muted);white-space:nowrap;}
+
+.signin-btn{
+  width:100%;padding:14px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:11px;font-size:14px;
+  color:var(--gold);cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:background 0.2s,border-color 0.2s,transform 0.15s;
+  animation:up 0.6s ease 0.7s both;
+}
+.signin-btn:hover{
+  background:var(--gold-dim);
+  border-color:var(--gold);
+  transform:translateY(-1px);
+}
+
+@keyframes up{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@media(max-width:960px){
+  .row2{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  .panel-img{display:none;}
+  .panel-form{padding:36px 28px;}
+}
+</style>
+</head>
+<body>
+
+<div class="page" id="page">
+
+  <!-- LEFT IMAGE PANEL -->
+  <div class="panel-img">
+    <div class="img-bg"></div>
+    <div class="img-overlay"></div>
+    <div class="img-edge"></div>
+
+    <div class="img-content">
+
+      <div class="img-badge">
+        <div class="badge-pulse"></div>
+        <span>Join Free Today</span>
+      </div>
+
+      <div class="img-footer">
+        <h1>Your <em>Dream</em><br>Home Awaits</h1>
+        <div class="img-sep"></div>
+        <p>
+          Create your free account and unlock access to thousands of
+          premium verified property listings across India.
+        </p>
+        <div class="img-stats">
+          <div class="stat">
+            <div class="stat-num">12K+</div>
+            <div class="stat-lbl">Properties</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">98%</div>
+            <div class="stat-lbl">Verified</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">Free</div>
+            <div class="stat-lbl">Always</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT FORM PANEL -->
+  <div class="panel-form">
+
+    <div class="form-eyebrow">New Account</div>
+    <div class="form-title">Create Account</div>
+    <p class="form-sub">Fill in your details below — takes under 30 seconds</p>
+
+    <div class="msg err" id="errMsg"></div>
+    <div class="msg ok"  id="okMsg"></div>
+
+    <!-- Name + Phone -->
+    <div class="row2">
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="name" placeholder="John Doe" autocomplete="name" oninput="validate(this,'name')">
+      </div>
+      <div class="field">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="10-digit number" autocomplete="tel"
+               maxlength="10"
+               oninput="validatePhone(this)">
+        <div class="hint">Enter exactly 10 digits</div>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="you@example.com" autocomplete="email" oninput="validate(this,'email')">
+    </div>
+
+    <!-- Password + Confirm -->
+    <div class="row2">
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Min. 6 characters" autocomplete="new-password" oninput="validate(this,'pass')">
+      </div>
+      <div class="field">
+        <label>Confirm Password</label>
+        <input type="password" id="confirm" placeholder="Repeat password" autocomplete="new-password" oninput="validate(this,'confirm')">
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="register()">
+      Create Account →
+    </button>
+
+    <div class="divider">
+      <div class="div-line"></div>
+      <span class="div-txt">Already have an account?</span>
+      <div class="div-line"></div>
+    </div>
+
+    <button class="signin-btn" onclick="goLogin()">Sign In Instead</button>
+
+  </div>
+</div>
+
+<script>
+// ── Phone: only digits, exactly 10 ──
+function validatePhone(el){
+  // Strip any non-digit characters as user types
+  el.value = el.value.replace(/\D/g, '');
+  el.classList.remove("valid","invalid");
+  if(!el.value) return;
+  if(el.value.length === 10){
+    el.classList.add("valid");
+  } else {
+    el.classList.add("invalid");
+  }
+}
+
+// ── Generic field validation ──
+function validate(el, type){
+  const v = el.value.trim();
+  el.classList.remove("valid","invalid");
+  if(!v) return;
+
+  let ok = false;
+  if(type==="name")    ok = v.length >= 2;
+  if(type==="email")   ok = v.includes("@") && v.includes(".");
+  if(type==="pass")    ok = v.length >= 6;
+  if(type==="confirm") ok = v === document.getElementById("password").value.trim();
+
+  el.classList.add(ok ? "valid" : "invalid");
+}
+
+async function register(){
+  const name     = document.getElementById("name").value.trim();
+  const phone    = document.getElementById("phone").value.trim();
+  const email    = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const confirm  = document.getElementById("confirm").value.trim();
+  const errMsg   = document.getElementById("errMsg");
+  const okMsg    = document.getElementById("okMsg");
+  const btn      = document.getElementById("submitBtn");
+
+  errMsg.classList.remove("show");
+  okMsg.classList.remove("show");
+
+  // Validate all fields
+  if(!name||!phone||!email||!password||!confirm){
+    errMsg.textContent="⚠️ Please fill in all fields.";
+    errMsg.classList.add("show"); return;
+  }
+  // Strict 10-digit phone check
+  if(!/^\d{10}$/.test(phone)){
+    errMsg.textContent="⚠️ Phone number must be exactly 10 digits.";
+    errMsg.classList.add("show");
+    document.getElementById("phone").classList.add("invalid");
+    return;
+  }
+  if(!email.includes("@")||!email.includes(".")){
+    errMsg.textContent="⚠️ Please enter a valid email address.";
+    errMsg.classList.add("show"); return;
+  }
+  if(password.length<6){
+    errMsg.textContent="⚠️ Password must be at least 6 characters.";
+    errMsg.classList.add("show"); return;
+  }
+  if(password!==confirm){
+    errMsg.textContent="❌ Passwords do not match.";
+    errMsg.classList.add("show"); return;
+  }
+
+  // Loading
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Creating account…';
+
+  localStorage.setItem("name",name);
+  localStorage.setItem("email",email);
+  localStorage.setItem("password",password);
+
+  try{
+    const res    = await fetch("/register",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({name,email,phone,password})
+    });
+    const result = await res.json();
+
+    if(res.ok && result.message){
+      okMsg.textContent="✅ Account created! Redirecting to login…";
+      okMsg.classList.add("show");
+      btn.innerHTML="✓ Account Created";
+
+      setTimeout(()=>{
+        document.getElementById("page").classList.add("flip");
+        setTimeout(()=>{ window.location.href="/loginpage"; },700);
+      },800);
+
+    } else {
+      errMsg.textContent="❌ "+(result.error||"Registration failed. Try again.");
+      errMsg.classList.add("show");
+      btn.disabled=false;
+      btn.innerHTML="Create Account →";
+    }
+  } catch(e){
+    errMsg.textContent="⚠️ Cannot reach server. Make sure Flask is running.";
+    errMsg.classList.add("show");
+    btn.disabled=false;
+    btn.innerHTML="Create Account →";
+  }
+}
+
+function goLogin(){
+  document.getElementById("page").classList.add("flip");
+  setTimeout(()=>{ window.location.href="/loginpage"; },700);
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter") register();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EasyEstate — Admin Messages</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#d4af37;--gold2:#ffd700;--bg:#070707;
+  --surface:#0f0f0f;--surface2:#141414;
+  --border:rgba(212,175,55,0.15);--text:#f0f0f0;--muted:#555;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;}
+
+/* SIDEBAR */
+.layout{display:flex;min-height:100vh;}
+.sidebar{
+  width:240px;background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:32px 0;
+  position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;
+  flex-shrink:0;
+}
+.sidebar-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:700;
+  color:var(--gold2);padding:0 24px 28px;
+  border-bottom:1px solid var(--border);margin-bottom:20px;
+}
+.sidebar-logo span{display:block;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-family:'DM Sans',sans-serif;margin-top:3px;}
+
+.nav-link{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 24px;font-size:13px;font-weight:400;
+  color:#777;text-decoration:none;
+  transition:all 0.2s;border-left:2px solid transparent;
+}
+.nav-link:hover{color:var(--gold);background:rgba(212,175,55,0.04);border-left-color:rgba(212,175,55,0.3);}
+.nav-link.active{color:var(--gold2);background:rgba(212,175,55,0.07);border-left-color:var(--gold);}
+.nav-icon{font-size:16px;}
+
+.sidebar-footer{
+  margin-top:auto;padding:20px 24px;
+  border-top:1px solid var(--border);
+}
+.sidebar-footer a{
+  font-size:12px;color:var(--muted);text-decoration:none;
+  display:flex;align-items:center;gap:8px;transition:color 0.2s;
+}
+.sidebar-footer a:hover{color:var(--gold);}
+
+/* MAIN */
+.main{flex:1;padding:40px 48px;overflow-y:auto;}
+
+/* TOP BAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:32px;
+}
+.topbar h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:34px;font-weight:700;color:var(--text);
+}
+.topbar-right{display:flex;gap:10px;align-items:center;}
+
+.badge-count{
+  background:var(--gold);color:#000;
+  font-size:12px;font-weight:700;
+  padding:4px 12px;border-radius:20px;
+}
+
+/* STATS ROW */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
+.stat-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;padding:20px 22px;
+  transition:border-color 0.3s;
+}
+.stat-card:hover{border-color:var(--gold);}
+.stat-card .slabel{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.stat-card .snum{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;font-weight:700;color:var(--gold2);
+}
+
+/* SEARCH */
+.toolbar{
+  display:flex;gap:12px;margin-bottom:20px;
+}
+.search-box{
+  flex:1;padding:11px 16px;
+  background:var(--surface2);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:10px;color:var(--text);
+  font-size:14px;font-family:'DM Sans',sans-serif;outline:none;
+  transition:border-color 0.2s;
+}
+.search-box:focus{border-color:var(--gold);}
+.search-box::placeholder{color:#2a2a2a;}
+
+/* TABLE */
+.table-wrap{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;
+}
+table{width:100%;border-collapse:collapse;}
+thead th{
+  background:rgba(212,175,55,0.06);
+  color:var(--gold);font-size:10px;font-weight:500;
+  text-transform:uppercase;letter-spacing:1px;
+  padding:14px 18px;text-align:left;
+  border-bottom:1px solid var(--border);
+}
+tbody tr{border-bottom:1px solid rgba(255,255,255,0.03);transition:background 0.2s;}
+tbody tr:hover{background:rgba(212,175,55,0.03);}
+tbody tr:last-child{border-bottom:none;}
+tbody td{padding:14px 18px;font-size:13px;color:#bbb;vertical-align:top;}
+
+.td-name{font-weight:500;color:var(--text);}
+.td-email{color:var(--gold);font-size:12px;}
+.td-msg{color:#888;max-width:300px;line-height:1.5;}
+.td-date{color:var(--muted);font-size:11px;white-space:nowrap;}
+
+/* DELETE BUTTON */
+.del-btn{
+  background:rgba(243, 241, 246, 0.08);
+  border:1px solid rgba(255,80,80,0.2);
+  color:#daff6b;padding:5px 12px;
+  border-radius:6px;font-size:11px;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:background 0.2s;
+}
+.del-btn:hover{background:rgba(255,80,80,0.2);}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty .eicon{font-size:48px;margin-bottom:14px;opacity:0.3;}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      EasyEstate
+      <span>Admin Panel</span>
+    </div>
+
+    <a href="/admin/messages"   class="nav-link active"><span class="nav-icon"></span> FeedBack</a>
+    <a href="/admin/properties" class="nav-link"><span class="nav-icon"></span> Properties</a>
+    <a href="/admin/users"      class="nav-link"><span class="nav-icon"></span> Users</a>
+    <a href="/bargraph"         class="nav-link"><span class="nav-icon"></span> Analytics</a>
+
+    <div class="sidebar-footer">
+      <a href="/index">← Back to Website</a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="topbar">
+      <h1>Contact Messages</h1>
+      <div class="topbar-right">
+        <span class="badge-count">{{ messages|length }} Total</span>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="slabel">Total Messages</div>
+        <div class="snum">{{ messages|length }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="slabel">Today</div>
+        <div class="snum" id="todayCount">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="slabel">Latest From</div>
+        <div class="snum" style="font-size:20px">
+          {% if messages %}{{ messages[0].name }}{% else %}—{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="toolbar">
+      <input class="search-box" id="searchBox" placeholder="Search by name, email or message…" oninput="filterTable()">
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      {% if messages %}
+      <table id="msgTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in messages %}
+          <tr>
+            <td style="color:var(--muted);font-size:12px">{{ m.id }}</td>
+            <td class="td-name">{{ m.name }}</td>
+            <td class="td-email">{{ m.email }}</td>
+            <td class="td-msg">{{ m.message }}</td>
+            <td class="td-date">{{ m.created_at[:16] if m.created_at else '—' }}</td>
+            <td>
+              <form method="POST" action="/admin/delete_message/{{ m.id }}"
+                    onsubmit="return confirm('Delete this message?')">
+                <button class="del-btn" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty">
+        <div class="eicon"></div>
+        <p>No messages yet. They will appear here when someone contacts you.</p>
+      </div>
+      {% endif %}
+    </div>
+  </main>
+</div>
+
+<script>
+function filterTable(){
+  const q = document.getElementById("searchBox").value.toLowerCase();
+  document.querySelectorAll("#msgTable tbody tr").forEach(row=>{
+    row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+  });
+}
+
+// Count today's messages
+const rows = document.querySelectorAll("#msgTable tbody tr");
+const today = new Date().toISOString().slice(0,10);
+let todayCount = 0;
+rows.forEach(r=>{
+  const dateCell = r.querySelectorAll("td")[4];
+  if(dateCell && dateCell.textContent.includes(today)) todayCount++;
+});
+document.getElementById("todayCount").textContent = todayCount;
+</script>
+</body>
+</html>

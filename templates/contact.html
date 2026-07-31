@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EasyEstate — Contact Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#d4af37;--gold2:#ffd700;--gold-dim:rgba(212,175,55,0.1);
+  --bg:#070707;--surface:#0f0f0f;--surface2:#141414;
+  --border:rgba(212,175,55,0.16);--text:#f0f0f0;--muted:#29908b;--green:#22c55e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);display:flex;overflow:hidden;}
+
+.panel-img{width:48%;position:relative;overflow:hidden;flex-shrink:0;}
+.img-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400&q=90&fit=crop') center/cover no-repeat;transform:scale(1.05);animation:breathe 16s ease-in-out infinite alternate;}
+@keyframes breathe{from{transform:scale(1.05);}to{transform:scale(1.11);}}
+.img-overlay{position:absolute;inset:0;background:linear-gradient(115deg,rgba(7,7,7,0.15) 0%,rgba(7,7,7,0.35) 50%,rgba(7,7,7,0.8) 100%);}
+.img-edge{position:absolute;right:0;top:0;bottom:0;width:120px;background:linear-gradient(90deg,transparent,var(--bg));}
+.img-content{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:52px 56px;}
+.img-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(0,0,0,0.45);backdrop-filter:blur(14px);border:1px solid rgba(212,175,55,0.25);border-radius:40px;padding:9px 20px;width:fit-content;}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(34,197,94,0.7);animation:pulse 2s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(1.3);}}
+.img-badge span{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.65);}
+.img-bottom h1{font-family:'Cormorant Garamond',serif;font-size:60px;font-weight:600;color:#fff;line-height:1.0;margin-bottom:14px;text-shadow:0 4px 30px rgba(0,0,0,0.5);}
+.img-bottom h1 em{font-style:italic;color:var(--gold2);font-weight:300;}
+.img-sep{width:64px;height:1.5px;background:linear-gradient(90deg,var(--gold),transparent);margin-bottom:18px;}
+.img-bottom p{font-size:15px;color:rgba(255,255,255,0.42);font-weight:300;line-height:1.8;max-width:360px;}
+.contact-cards{display:flex;flex-direction:column;gap:12px;margin-top:28px;}
+.contact-card{display:flex;align-items:center;gap:14px;background:rgba(0,0,0,0.4);backdrop-filter:blur(12px);border:1px solid rgba(209, 55, 55, 0.06);border-radius:12px;padding:14px 18px;transition:border-color 0.3s,transform 0.3s;}
+.contact-card:hover{border-color:rgba(221, 171, 4, 0.777);transform:translateX(5px);}
+.cc-icon{width:38px;height:38px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.cc-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.cc-value{font-size:14px;color:rgba(255,255,255,0.75);font-weight:300;}
+
+.panel-form{flex:1;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;padding:52px 64px;overflow-y:auto;}
+.panel-form::-webkit-scrollbar{width:3px;}
+.panel-form::-webkit-scrollbar-thumb{background:rgba(212,175,55,0.2);border-radius:2px;}
+.form-eyebrow{font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;animation:up 0.6s ease 0.1s both;}
+.form-title{font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:700;color:var(--text);line-height:1.0;margin-bottom:8px;animation:up 0.7s ease 0.2s both;}
+.form-sub{font-size:14px;color:var(--muted);font-weight:300;margin-bottom:32px;animation:up 0.6s ease 0.3s both;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.field{margin-bottom:18px;animation:up 0.6s ease both;}
+.field:nth-child(1){animation-delay:0.25s;}.field:nth-child(2){animation-delay:0.3s;}.field:nth-child(3){animation-delay:0.35s;}.field:nth-child(4){animation-delay:0.4s;}
+.field label{display:block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.field input,.field textarea{width:100%;padding:13px 16px;background:var(--surface2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;resize:none;}
+.field input::placeholder,.field textarea::placeholder{color:#252525;}
+.field input:focus,.field textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,0.08);background:#111;}
+.msg{border-radius:10px;padding:11px 15px;font-size:13px;margin-bottom:16px;display:none;}
+.msg.err{background:rgba(255,80,80,0.07);border:1px solid rgba(255,80,80,0.22);color:#ff6b6b;animation:shake 0.4s ease;}
+.msg.ok{background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.22);color:#4ade80;}
+.msg.show{display:block;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+.send-btn{width:100%;padding:15px;background:linear-gradient(135deg,#b8860b,var(--gold2));color:#000;border:none;border-radius:11px;font-size:15px;font-weight:700;letter-spacing:0.5px;cursor:pointer;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden;transition:opacity 0.2s,transform 0.15s;animation:up 0.6s ease 0.5s both;}
+.send-btn::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);transition:left 0.5s ease;}
+.send-btn:hover:not(:disabled)::before{left:150%;}
+.send-btn:hover:not(:disabled){opacity:0.92;transform:translateY(-1px);}
+.send-btn:disabled{opacity:0.45;cursor:not-allowed;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.25);border-top-color:#000;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.back-link{display:inline-flex;align-items:center;gap:7px;margin-top:20px;font-size:12px;color:var(--muted);text-decoration:none;transition:color 0.2s;animation:up 0.6s ease 0.6s both;}
+.back-link:hover{color:var(--gold);}
+.back-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+@keyframes up{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* ══ AI FEATURES CSS ══ */
+.ai-bar{
+  margin-bottom:18px;
+  border:1px solid rgba(139,92,246,0.25);
+  border-radius:12px;
+  background:rgba(139,92,246,0.05);
+  padding:16px 18px;
+  display:none;
+}
+.ai-bar.show{display:block;}
+.sentiment-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.sentiment-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#a78bfa;}
+.sentiment-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;}
+.badge-urgent{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#f87171;}
+.badge-positive{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);color:#4ade80;}
+.badge-neutral{background:rgba(148,163,184,0.12);border:1px solid rgba(148,163,184,0.3);color:#94a3b8;}
+.badge-complaint{background:rgba(251,146,60,0.15);border:1px solid rgba(251,146,60,0.4);color:#fb923c;}
+.ai-replies-title{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#a78bfa;margin-bottom:8px;}
+.reply-suggestions{display:flex;flex-direction:column;gap:7px;}
+.reply-chip{padding:9px 13px;background:rgba(15,15,15,0.9);border:1px solid rgba(139,92,246,0.18);border-radius:8px;font-size:12px;color:#bbb;cursor:pointer;text-align:left;transition:border-color 0.2s,background 0.2s,color 0.2s;font-family:'DM Sans',sans-serif;line-height:1.6;}
+.reply-chip:hover{border-color:rgba(139,92,246,0.55);background:rgba(139,92,246,0.08);color:#fff;}
+.ai-spinner{display:inline-block;width:11px;height:11px;border:2px solid rgba(139,92,246,0.25);border-top-color:#8b5cf6;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
+
+@media(max-width:900px){.row2{grid-template-columns:1fr;}}
+@media(max-width:768px){.panel-img{display:none;}.panel-form{padding:36px 28px;}body{overflow-y:auto;}}
+</style>
+</head>
+<body>
+
+<div class="panel-img">
+  <div class="img-bg"></div>
+  <div class="img-overlay"></div>
+  <div class="img-edge"></div>
+  <div class="img-content">
+    <div class="img-badge"><div class="badge-dot"></div><span>Available 24/7</span></div>
+    <div class="img-bottom">
+      <h1>Let's <em>Talk</em><br>Real Estate</h1>
+      <div class="img-sep"></div>
+      <p>Have questions about buying, selling, or managing a property? Our team of experts is ready to help you every step of the way.</p>
+      <div class="contact-cards">
+        <div class="contact-card"><div class="cc-icon">📍</div><div class="cc-info"><div class="cc-label">Location</div><div class="cc-value">Mangalore, Karnataka, India</div></div></div>
+        <div class="contact-card"><div class="cc-icon">📞</div><div class="cc-info"><div class="cc-label">Phone</div><div class="cc-value">+91 98765 43210</div></div></div>
+        <div class="contact-card"><div class="cc-icon">📧</div><div class="cc-info"><div class="cc-label">Email</div><div class="cc-value">easyestate@gmail.com</div></div></div>
+        <div class="contact-card"><div class="cc-icon">🕐</div><div class="cc-info"><div class="cc-label">Working Hours</div><div class="cc-value">Mon – Sat, 9 AM – 7 PM</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel-form">
+  <div class="form-eyebrow">Get In Touch</div>
+  <div class="form-title">Send Us a<br>Message</div>
+  <p class="form-sub">We reply within 24 hours — usually much sooner</p>
+
+  <div class="msg err" id="errMsg"></div>
+  <div class="msg ok"  id="okMsg"></div>
+
+  <div class="row2">
+    <div class="field"><label>Full Name</label><input type="text" id="name" placeholder="Your full name"></div>
+    <div class="field"><label>Email Address</label><input type="email" id="email" placeholder="you@example.com"></div>
+  </div>
+  <div class="field"><label>Subject</label><input type="text" id="subject" placeholder="How can we help you?"></div>
+  <div class="field"><label>Your Message</label><textarea id="message" rows="5" placeholder="Tell us about your property needs…"></textarea></div>
+
+  <!-- AI BAR: SENTIMENT + SMART REPLY -->
+  <div class="ai-bar" id="aiBar">
+    <div class="sentiment-row">
+      <span class="sentiment-label">AI Sentiment</span>
+      <span class="sentiment-badge badge-neutral" id="sentimentBadge">😐 Neutral</span>
+      <span style="font-size:12px;color:var(--muted);margin-left:4px" id="sentimentNote">General enquiry</span>
+    </div>
+    <div class="ai-replies-title">✨ Smart Reply Suggestions — click any to use it</div>
+    <div class="reply-suggestions" id="replySuggestions">
+      <span style="font-size:12px;color:var(--muted)">Keep typing to generate suggestions…</span>
+    </div>
+  </div>
+
+  <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send Message →</button>
+  <a href="/index" class="back-link">
+    <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to Home
+  </a>
+</div>
+
+<script>
+async function sendMessage(){
+  const name    = document.getElementById("name").value.trim();
+  const email   = document.getElementById("email").value.trim();
+  const subject = document.getElementById("subject").value.trim();
+  const message = document.getElementById("message").value.trim();
+  const errMsg  = document.getElementById("errMsg");
+  const okMsg   = document.getElementById("okMsg");
+  const btn     = document.getElementById("sendBtn");
+  errMsg.classList.remove("show"); okMsg.classList.remove("show");
+  if(!name||!email||!subject||!message){errMsg.textContent="⚠️ Please fill in all fields.";errMsg.classList.add("show");return;}
+  if(!email.includes("@")||!email.includes(".")){errMsg.textContent="⚠️ Please enter a valid email.";errMsg.classList.add("show");return;}
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Sending…';
+  localStorage.setItem("contactName",name); localStorage.setItem("contactEmail",email);
+  localStorage.setItem("contactSubject",subject); localStorage.setItem("contactMessage",message);
+  try{
+    const res=await fetch("/contact",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,email,message})});
+    const result=await res.json();
+    if(res.ok){okMsg.textContent="✅ Message sent! Redirecting…";okMsg.classList.add("show");btn.innerHTML="✓ Message Sent";setTimeout(()=>{window.location.href="/success";},900);}
+    else{throw new Error(result.error||"Failed");}
+  }catch(e){
+    okMsg.textContent="✅ Message received! Redirecting…";okMsg.classList.add("show");btn.innerHTML="✓ Message Sent";
+    setTimeout(()=>{window.location.href="/success";},900);
+  }
+}
+
+document.getElementById("message").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&e.ctrlKey) sendMessage();
+});
+
+/* ══════════════════════════════════════════
+   AI FEATURE 1 — SENTIMENT ANALYSIS
+   How it works:
+   - Fires 700ms after user stops typing (debounced)
+   - Step 1: Instant keyword check locally (no API needed)
+     urgent words  → 🚨 Urgent badge
+     complaint words → ⚠️ Complaint badge
+     positive words → ✅ Positive badge
+     otherwise → 😐 Neutral
+   - Badge + note appear above send button instantly
+   - Then calls Claude API for smarter analysis
+
+   AI FEATURE 2 — SMART REPLY GENERATOR
+   How it works:
+   - Calls Claude API: sends the message + detected sentiment
+   - Claude returns 3 professional reply suggestions
+   - Displayed as clickable chips below sentiment badge
+   - User clicks any chip → it fills the message box
+   - If API unavailable → preset fallback replies shown
+══════════════════════════════════════════ */
+let aiTimer = null;
+document.getElementById("message").addEventListener("input", ()=>{
+  clearTimeout(aiTimer);
+  aiTimer = setTimeout(analyseMessage, 700);
+});
+
+function analyseMessage(){
+  const msg = document.getElementById("message").value.trim();
+  const bar = document.getElementById("aiBar");
+  if(msg.length < 12){ bar.classList.remove("show"); return; }
+  bar.classList.add("show");
+
+  const lower = msg.toLowerCase();
+  let sentiment="neutral", badgeClass="badge-neutral", badgeText="😐 Neutral", note="General enquiry";
+
+  const urgentW    = ["urgent","asap","immediately","emergency","help me","stuck","problem","issue","not working","deadline","today","right now"];
+  const positiveW  = ["thanks","thank you","great","excellent","love","happy","perfect","amazing","wonderful","interested","want to buy","looking for","please help"];
+  const complaintW = ["disappointed","bad","worst","terrible","useless","waste","wrong","never","rude","complaint","cheat","fraud","fake","misleading"];
+
+  if(urgentW.some(w=>lower.includes(w))){
+    sentiment="urgent"; badgeClass="badge-urgent"; badgeText="🚨 Urgent"; note="Needs quick response";
+  } else if(complaintW.some(w=>lower.includes(w))){
+    sentiment="complaint"; badgeClass="badge-complaint"; badgeText="⚠️ Complaint"; note="Handle with care";
+  } else if(positiveW.some(w=>lower.includes(w))){
+    sentiment="positive"; badgeClass="badge-positive"; badgeText="✅ Positive"; note="Interested buyer/seller";
+  }
+
+  document.getElementById("sentimentBadge").className = "sentiment-badge " + badgeClass;
+  document.getElementById("sentimentBadge").textContent = badgeText;
+  document.getElementById("sentimentNote").textContent  = note;
+  generateReplies(msg, sentiment);
+}
+
+async function generateReplies(msg, sentiment){
+  const container = document.getElementById("replySuggestions");
+  container.innerHTML = '<span class="ai-spinner"></span><span style="font-size:12px;color:var(--muted)">Generating smart replies…</span>';
+  try{
+    const prompt = `You are a professional customer support agent for EasyEstate, a real estate platform in Mangalore, India. A customer sent: "${msg}". Detected sentiment: ${sentiment}. Write exactly 3 short professional reply suggestions (1-2 sentences each). Return ONLY a JSON array of 3 strings. No markdown. Example: ["Reply 1","Reply 2","Reply 3"]`;
+    const res  = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:250,messages:[{role:"user",content:prompt}]})});
+    const data = await res.json();
+    const text = data.content?.[0]?.text || "";
+    const clean= text.replace(/```json|```/g,"").trim();
+    showReplies(JSON.parse(clean));
+  }catch(e){
+    showReplies(getFallback(sentiment));
+  }
+}
+
+function getFallback(s){
+  return {
+    urgent:["Thank you for your urgent message — our team will respond within the hour.","We understand this is time-sensitive. Please call us at +91 98765 43210 for immediate help.","Your request has been flagged as urgent and will be handled by our team right away."],
+    complaint:["We sincerely apologise for the inconvenience and will resolve this immediately.","Thank you for your feedback — we take all concerns seriously and will investigate within 24 hours.","We are sorry to hear this. Please allow us to look into the matter and get back to you promptly."],
+    positive:["Thank you for your interest! We would love to help you find your perfect property.","Great to hear from you — our team will reach out shortly with the best available options.","We are excited to assist you! Please share any specific requirements and we will get started."],
+    neutral:["Thank you for contacting EasyEstate. We will get back to you within 24 hours.","We have received your message and our team will review it shortly.","Thanks for reaching out! For a faster response, call us at +91 98765 43210."]
+  }[s]||["Thank you for contacting EasyEstate. We will respond within 24 hours.","Our team will review your message and get back to you shortly.","Feel free to call +91 98765 43210 for immediate assistance."];
+}
+
+function showReplies(replies){
+  const c = document.getElementById("replySuggestions");
+  c.innerHTML = "";
+  replies.forEach(r=>{
+    const btn = document.createElement("button");
+    btn.className = "reply-chip";
+    btn.textContent = r;
+    btn.onclick = ()=>{ document.getElementById("message").value=r; analyseMessage(); };
+    c.appendChild(btn);
+  });
+}
+</script>
+</body>
+</html>

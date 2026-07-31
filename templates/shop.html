@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyEstate | Properties</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --gold:#d4af37;--gold2:#ffd700;--bg:#080808;
+  --surface:#111;--surface2:#181818;
+  --border:rgba(212,175,55,0.18);--text:#f0f0f0;--muted:#777;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;}
+
+header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 50px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--gold2);letter-spacing:1px;}
+nav a{color:#999;text-decoration:none;margin-left:24px;font-size:13px;font-weight:300;transition:color 0.2s;}
+nav a:hover{color:var(--gold);}
+
+.hero{padding:70px 50px 40px;background:linear-gradient(180deg,#0f0d00 0%,var(--bg) 100%);text-align:center;animation:fadeDown 0.8s ease both;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;color:var(--gold2);letter-spacing:1px;line-height:1.1;}
+.hero p{color:var(--muted);font-size:15px;margin-top:10px;font-weight:300;}
+
+/* ── FILTER BAR ── */
+.filter-bar{
+  display:flex;gap:10px;align-items:center;
+  padding:0 50px 30px;flex-wrap:wrap;
+  animation:fadeUp 0.8s ease 0.1s both;
+}
+.filter-bar input,.filter-bar select{
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:10px 16px;border-radius:8px;
+  font-size:13px;font-family:'DM Sans',sans-serif;
+  outline:none;transition:border-color 0.2s;
+}
+.filter-bar input:focus,.filter-bar select:focus{border-color:var(--gold);}
+.filter-bar input{flex:1;min-width:160px;}
+.filter-bar select option{background:#111;}
+.price-inputs{display:flex;gap:8px;align-items:center;}
+.price-inputs input{width:130px;flex:none;}
+.price-inputs input:not(:placeholder-shown){ border-color: rgba(212,175,55,0.5); background: rgba(212,175,55,0.04); }
+.price-sep{font-size:12px;color:var(--muted);}
+.filter-btn{
+  padding:10px 22px;background:var(--gold);color:#000;
+  border:none;border-radius:8px;font-size:13px;font-weight:500;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:background 0.2s;white-space:nowrap;
+}
+.filter-btn:hover{background:var(--gold2);}
+.filter-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.filter-btn.secondary:hover{border-color:var(--gold);color:var(--gold);background:transparent;}
+
+/* ── STATS BAR ── */
+.stats-bar{display:flex;gap:30px;padding:0 50px 24px;border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:30px;}
+.stat-item{font-size:13px;color:var(--muted);}
+.stat-item b{color:var(--gold);font-size:18px;display:block;margin-bottom:2px;}
+
+/* ── SORT ROW ── */
+.sort-row{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:0 50px 18px;}
+.sort-label{font-size:12px;color:var(--muted);}
+.sort-row select{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;}
+
+/* ── PROPERTY GRID ── */
+.property-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:24px;padding:0 50px 60px;
+  animation:fadeUp 0.8s ease 0.2s both;
+}
+
+.property-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;cursor:pointer;
+  transition:transform 0.3s,box-shadow 0.3s,border-color 0.3s;position:relative;
+}
+.property-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(212,175,55,0.15);border-color:rgba(212,175,55,0.5);}
+.card-img{width:100%;height:220px;object-fit:cover;display:block;transition:transform 0.4s;}
+.property-card:hover .card-img{transform:scale(1.04);}
+.img-wrap{overflow:hidden;height:220px;position:relative;}
+.no-img{width:100%;height:220px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:48px;color:#222;}
+.reg-badge{position:absolute;top:12px;left:12px;background:var(--gold);color:#000;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:0.5px;}
+.type-badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);color:var(--gold);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--border);}
+.card-body{padding:18px 20px 20px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-loc{font-size:12px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:4px;}
+.card-price{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold2);font-weight:700;margin-bottom:12px;}
+.card-meta{display:flex;gap:14px;font-size:12px;color:var(--muted);border-top:1px solid rgba(255,255,255,0.05);padding-top:12px;}
+.card-meta span{display:flex;align-items:center;gap:4px;}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:1000;justify-content:center;align-items:center;padding:20px;backdrop-filter:blur(6px);}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;width:100%;max-width:860px;max-height:90vh;overflow-y:auto;position:relative;animation:modalIn 0.3s ease both;}
+@keyframes modalIn{from{opacity:0;transform:scale(0.96);}to{opacity:1;transform:scale(1);}}
+.modal-img-wrap{position:relative;height:400px;overflow:hidden;}
+.modal-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.modal-close{position:absolute;top:16px;right:16px;width:38px;height:38px;background:rgba(0,0,0,0.7);border:none;color:#fff;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;z-index:10;}
+.modal-close:hover{background:rgba(0,0,0,0.9);}
+.img-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.6);color:#fff;border:none;padding:12px 15px;border-radius:50%;cursor:pointer;font-size:16px;transition:background 0.2s;z-index:10;}
+.img-arrow:hover{background:rgba(0,0,0,0.9);}
+.arr-prev{left:14px;}.arr-next{right:14px;}
+.img-dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:6px;}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.4);transition:background 0.2s;cursor:pointer;}
+.dot.active{background:var(--gold);}
+.modal-body{padding:28px 32px 32px;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.modal-price{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold2);font-weight:700;margin-bottom:18px;}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.modal-field{background:var(--surface2);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px 16px;}
+.modal-field .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.modal-field .value{font-size:14px;color:var(--text);font-weight:500;}
+.modal-desc{font-size:14px;color:#aaa;line-height:1.7;margin-bottom:22px;}
+.modal-reg-btn{width:100%;padding:15px;background:var(--gold);color:#000;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s,transform 0.2s;}
+.modal-reg-btn:hover{background:var(--gold2);transform:scale(1.01);}
+
+/* ── REGISTER INTEREST OVERLAY ── */
+.reg-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:2000;justify-content:center;align-items:center;}
+.reg-overlay.open{display:flex;}
+.reg-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:520px;animation:modalIn 0.3s ease both;}
+.reg-box h2{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);margin-bottom:6px;}
+.reg-box p.reg-sub{font-size:13px;color:var(--muted);margin-bottom:22px;font-weight:300;}
+.reg-box input{width:100%;padding:13px 16px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:10px;font-size:14px;margin-bottom:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;}
+.reg-box input:focus{border-color:var(--gold);}
+.reg-box input.ro{color:var(--muted);cursor:default;}
+.reg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.interest-row{display:flex;gap:10px;margin-bottom:14px;}
+.interest-btn{flex:1;padding:11px;border-radius:10px;background:var(--surface2);border:1px solid rgba(255,255,255,0.06);color:#aaa;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;text-align:center;}
+.interest-btn.active{background:rgba(212,175,55,0.12);border-color:var(--gold);color:var(--gold2);font-weight:500;}
+.reg-submit{width:100%;padding:14px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;margin-top:4px;}
+.reg-submit:hover{background:var(--gold2);}
+.reg-submit:disabled{opacity:0.5;cursor:not-allowed;}
+.reg-cancel{width:100%;padding:11px;background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;transition:border-color 0.2s;}
+.reg-cancel:hover{border-color:var(--muted);}
+.email-note{font-size:11px;color:var(--muted);margin-top:-8px;margin-bottom:14px;padding-left:4px;}
+
+/* ── PHONE VALIDATION STYLES ── */
+input.valid   { border-color: #4ade80 !important; }
+input.invalid { border-color: #f87171 !important; }
+.phone-hint {
+  font-size: 11px;
+  margin-top: -10px;
+  margin-bottom: 14px;
+  padding-left: 4px;
+  display: none;
+}
+.phone-hint.show-hint { display: block; }
+.phone-hint.hint-ok   { color: #4ade80; }
+.phone-hint.hint-err  { color: #f87171; }
+
+/* ── SUCCESS OVERLAY ── */
+.success-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:3000;justify-content:center;align-items:center;}
+.success-overlay.open{display:flex;}
+.success-box{background:var(--surface);border:1px solid rgba(47,232,176,0.3);border-radius:20px;padding:40px;width:100%;max-width:480px;text-align:center;animation:modalIn 0.3s ease both;}
+.success-box .tick{font-size:54px;margin-bottom:14px;}
+.success-box h2{font-family:'Cormorant Garamond',serif;font-size:28px;color:#2fe8b0;margin-bottom:10px;}
+.success-box p{font-size:14px;color:#aaa;line-height:1.7;}
+.success-box .reg-no{font-size:18px;color:var(--gold);font-weight:700;margin-top:14px;}
+.success-img{width:100%;border-radius:12px;margin:16px 0;max-height:200px;object-fit:cover;}
+.email-sent-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:30px;padding:6px 16px;font-size:12px;color:#4ade80;margin-top:12px;}
+.close-success-btn{margin-top:18px;padding:10px 28px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:30px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color 0.2s;}
+.close-success-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+.empty-state{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--muted);}
+.empty-state .icon{font-size:54px;margin-bottom:16px;opacity:0.3;}
+.empty-state p{font-size:15px;}
+.empty-state a{display:inline-block;margin-top:16px;padding:11px 28px;border:1px solid var(--gold);color:var(--gold);text-decoration:none;border-radius:30px;font-size:13px;transition:background 0.2s;}
+.empty-state a:hover{background:rgba(212,175,55,0.1);}
+
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.2);border-top-color:#000;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:7px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+@media(max-width:768px){
+  header,.hero,.filter-bar,.stats-bar,.sort-row,.property-grid{padding-left:20px;padding-right:20px;}
+  .hero h1{font-size:36px;}
+  .modal-grid,.reg-row{grid-template-columns:1fr;}
+  .modal-body{padding:20px;}
+  .price-inputs{flex-wrap:wrap;}
+  .price-inputs input{width:120px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── AI CHAT WIDGET ── -->
+<style>
+  #chat-btn {
+    position: fixed; bottom: 30px; right: 30px; z-index: 9999;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: linear-gradient(135deg, #b8860b, #ffd700);
+    border: none; cursor: pointer; font-size: 26px;
+    box-shadow: 0 4px 20px rgba(212,175,55,0.5);
+    transition: transform 0.2s;
+  }
+  #chat-btn:hover { transform: scale(1.1); }
+
+  #chat-box {
+    display: none; position: fixed; bottom: 100px; right: 30px;
+    width: 340px; height: 480px; z-index: 9999;
+    background: #0f0f0f; border: 1px solid rgba(212,175,55,0.3);
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    flex-direction: column;
+  }
+  #chat-box.open { display: flex; }
+
+  #chat-header {
+    background: linear-gradient(135deg, #0a0a0a, #1c1c1c);
+    padding: 14px 18px; border-bottom: 1px solid rgba(212,175,55,0.2);
+    display: flex; align-items: center; gap: 10px;
+  }
+  #chat-header .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: #ffd700; animation: blink 2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  #chat-header span {
+    font-size: 14px; font-weight: 600; color: #ffd700;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  #chat-messages {
+    flex: 1; overflow-y: auto; padding: 14px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  #chat-messages::-webkit-scrollbar { width: 4px; }
+  #chat-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+  .msg { max-width: 85%; padding: 10px 14px; border-radius: 12px;
+         font-size: 13px; line-height: 1.5; font-family: 'DM Sans', sans-serif; }
+  .msg.user { background: rgba(212,175,55,0.15); color: #ffd700;
+              border: 1px solid rgba(212,175,55,0.25); align-self: flex-end;
+              border-bottom-right-radius: 4px; }
+  .msg.bot  { background: #1a1a1a; color: #dddddd;
+              border: 1px solid rgba(255,255,255,0.07); align-self: flex-start;
+              border-bottom-left-radius: 4px; }
+  .msg.typing { color: #555; font-style: italic; }
+
+  #chat-footer {
+    padding: 12px; border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; gap: 8px; background: #0f0f0f;
+  }
+  #chat-input {
+    flex: 1; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 10px 14px; color: #f0f0f0;
+    font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none;
+  }
+  #chat-input:focus { border-color: rgba(212,175,55,0.4); }
+  #chat-input::placeholder { color: #333; }
+  #chat-send {
+    background: linear-gradient(135deg, #b8860b, #ffd700);
+    border: none; border-radius: 8px; padding: 10px 14px;
+    color: #000; font-weight: 700; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    transition: opacity 0.2s;
+  }
+  #chat-send:hover { opacity: 0.85; }
+  #chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+</style>
+
+<!-- Chat Button -->
+<button id="chat-btn" onclick="toggleChat()" title="Ask EasyEstate AI">💬</button>
+
+<!-- Chat Box -->
+<div id="chat-box">
+  <div id="chat-header">
+    <div class="dot"></div>
+    <span>EasyEstate AI Assistant</span>
+  </div>
+  <div id="chat-messages">
+    <div class="msg bot">
+      Hi! I'm your EasyEstate AI Assistant. Ask me anything about buying, 
+      renting, property prices, home loans, or legal steps. 🏠
+    </div>
+  </div>
+  <div id="chat-footer">
+    <input id="chat-input" type="text" placeholder="Ask about properties..."
+           onkeydown="if(event.key==='Enter') sendMsg()">
+    <button id="chat-send" onclick="sendMsg()">Send</button>
+  </div>
+</div>
+
+<script>
+  let chatHistory = [];
+
+  function toggleChat() {
+    const box = document.getElementById('chat-box');
+    box.classList.toggle('open');
+    if (box.classList.contains('open')) {
+      document.getElementById('chat-input').focus();
+    }
+  }
+
+  async function sendMsg() {
+    const input = document.getElementById('chat-input');
+    const msgs  = document.getElementById('chat-messages');
+    const send  = document.getElementById('chat-send');
+    const text  = input.value.trim();
+    if (!text) return;
+
+    msgs.innerHTML += `<div class="msg user">${text}</div>`;
+    chatHistory.push({ role: "user", content: text });
+    input.value = "";
+    send.disabled = true;
+
+    const typingId = 'typing-' + Date.now();
+    msgs.innerHTML += `<div class="msg bot typing" id="${typingId}">Thinking...</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+
+    try {
+      const res  = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, history: chatHistory.slice(-10) })
+      });
+      const data  = await res.json();
+      const reply = data.reply || "Sorry, I couldn't get a response.";
+      document.getElementById(typingId).remove();
+      msgs.innerHTML += `<div class="msg bot">${reply}</div>`;
+      chatHistory.push({ role: "assistant", content: reply });
+    } catch (e) {
+      document.getElementById(typingId).remove();
+      msgs.innerHTML += `<div class="msg bot">Connection error. Please try again.</div>`;
+    }
+
+    send.disabled = false;
+    msgs.scrollTop = msgs.scrollHeight;
+    input.focus();
+  }
+</script>
+
+<header>
+  <div class="logo">EasyEstate</div>
+  <nav>
+    <a href="/index">Home</a>
+    <a href="/seller">Sell Property</a>
+    <a href="/bargraph">Analytics</a>
+    <a href="/about">About</a>
+    <a href="/loginpage">Logout</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <h1>Find Your Dream Property</h1>
+  <p>Browse premium listings submitted directly by verified sellers</p>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <input id="searchInput" placeholder="Search by title or location…" oninput="filterCards()">
+
+  <select id="filterType" onchange="filterCards()">
+    <option value="">All Types</option>
+    <option>Apartment</option>
+    <option>Villa</option>
+    <option>Independent House</option>
+    <option>Commercial</option>
+  </select>
+
+  <select id="filterBed" onchange="filterCards()">
+    <option value="">Any Beds</option>
+    <option value="1">1+</option>
+    <option value="2">2+</option>
+    <option value="3">3+</option>
+    <option value="4">4+</option>
+  </select>
+
+  <div class="price-inputs">
+    <input type="number" id="minPrice" placeholder="Min ₹" oninput="filterCards()" min="0">
+    <span class="price-sep">–</span>
+    <input type="number" id="maxPrice" placeholder="Max ₹" oninput="filterCards()" min="0">
+  </div>
+
+  <button class="filter-btn secondary" onclick="clearFilters()">Clear All</button>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar" id="statsBar" style="display:none">
+  <div class="stat-item"><b id="statCount">0</b>Properties</div>
+  <div class="stat-item"><b id="statAvg">—</b>Avg Price</div>
+  <div class="stat-item"><b id="statTop">—</b>Top Location</div>
+</div>
+
+<!-- SORT ROW -->
+<div class="sort-row">
+  <span class="sort-label">Sort by:</span>
+  <select id="sortSelect" onchange="filterCards()">
+    <option value="newest">Newest First</option>
+    <option value="price_low">Price: Low to High</option>
+    <option value="price_high">Price: High to Low</option>
+    <option value="beds">Most Bedrooms</option>
+  </select>
+</div>
+
+<div class="property-grid" id="propertyGrid">
+  <div class="empty-state"><div class="icon">🏠</div><p>Loading properties…</p></div>
+</div>
+
+<!-- PROPERTY MODAL -->
+<div class="modal-overlay" id="propModal">
+  <div class="modal-box">
+    <div class="modal-img-wrap" id="modalImgWrap">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="img-arrow arr-prev" onclick="prevImg()">❮</button>
+      <img id="modalImg" src="" alt="">
+      <button class="img-arrow arr-next" onclick="nextImg()">❯</button>
+      <div class="img-dots" id="imgDots"></div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-title" id="mTitle"></div>
+      <div class="modal-price" id="mPrice"></div>
+      <div class="modal-grid">
+        <div class="modal-field"><div class="label">Location</div><div class="value" id="mLoc"></div></div>
+        <div class="modal-field"><div class="label">Type</div><div class="value" id="mType"></div></div>
+        <div class="modal-field"><div class="label">Bedrooms</div><div class="value" id="mBed"></div></div>
+        <div class="modal-field"><div class="label">Bathrooms</div><div class="value" id="mBath"></div></div>
+        <div class="modal-field"><div class="label">Seller</div><div class="value" id="mSeller"></div></div>
+        <div class="modal-field"><div class="label">Phone</div><div class="value" id="mPhone"></div></div>
+      </div>
+      <p class="modal-desc" id="mDesc"></p>
+      <button class="modal-reg-btn" onclick="openRegister()">Register Interest →</button>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER OVERLAY -->
+<div class="reg-overlay" id="regOverlay">
+  <div class="reg-box">
+    <h2>Register Interest</h2>
+    <p class="reg-sub">Fill your details and we'll send a confirmation email with owner contact details.</p>
+
+    <input id="rPropName" class="ro" readonly placeholder="Property">
+
+    <div class="reg-row">
+      <input id="rRegNo" class="ro" readonly placeholder="Reg No">
+      <input id="rPrice" class="ro" readonly placeholder="Price">
+    </div>
+
+    <div class="interest-row">
+      <button type="button" class="interest-btn active" id="btnBuy"  onclick="setInterest('Buy')">🏠 Buy</button>
+      <button type="button" class="interest-btn"        id="btnRent" onclick="setInterest('Rent')">🔑 Rent</button>
+    </div>
+
+    <!-- ── Single clean row: Name + Phone ── -->
+    <div class="reg-row">
+      <input id="rUserName" placeholder="Your Full Name *" required>
+      <input
+        id="rUserPhone"
+        type="tel"
+        placeholder="10-digit Phone *"
+        maxlength="10"
+        oninput="validatePhone(this)"
+        autocomplete="tel"
+        required
+      >
+    </div>
+    <!-- Live hint shown below phone -->
+    <p class="phone-hint" id="phoneHint"></p>
+
+    <input id="rUserEmail" placeholder="Your Email Address *" type="email" required>
+    <p class="email-note">📧 Confirmation email with owner contact will be sent here.</p>
+
+    <button class="reg-submit" id="regSubmitBtn" onclick="submitReg()">Send Confirmation Email →</button>
+    <button class="reg-cancel" onclick="closeReg()">Cancel</button>
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="tick">🎉</div>
+    <h2>Registration Successful!</h2>
+    <img class="success-img" id="successImg" src="" alt="" style="display:none">
+    <p id="successText"></p>
+    <div class="reg-no" id="successRegNo"></div>
+    <div class="email-sent-badge" id="emailSentBadge" style="display:none">✅ Confirmation email sent!</div>
+    <p style="font-size:12px;color:var(--muted);margin-top:12px" id="successEmailNote"></p>
+    <button class="close-success-btn" onclick="document.getElementById('successOverlay').classList.remove('open')">Close</button>
+  </div>
+</div>
+
+<script>
+let allProperties = [], current = null, imgIndex = 0;
+let currentRegNo = "", currentInterest = "Buy";
+
+function fmt(v){
+  if(!v) return '₹0';
+  if(v>=10000000) return '₹'+(v/10000000).toFixed(2)+' Cr';
+  if(v>=100000)   return '₹'+(v/100000).toFixed(1)+' L';
+  return '₹'+Number(v).toLocaleString('en-IN');
+}
+
+async function loadProperties(){
+  try{
+    const res     = await fetch("/api/properties");
+    allProperties = await res.json();
+    filterCards();
+    updateStats(allProperties);
+  }catch(e){
+    document.getElementById("propertyGrid").innerHTML=`
+      <div class="empty-state">
+        <div class="icon">⚠️</div>
+        <p>Could not load. Make sure Flask is running.</p>
+      </div>`;
+  }
+}
+
+function filterCards(){
+  const q      = document.getElementById("searchInput").value.toLowerCase();
+  const type   = document.getElementById("filterType").value;
+  const bed    = parseInt(document.getElementById("filterBed").value) || 0;
+  const minRaw = document.getElementById("minPrice").value.trim();
+  const maxRaw = document.getElementById("maxPrice").value.trim();
+  const minP   = minRaw !== "" ? parseFloat(minRaw) : null;
+  const maxP   = maxRaw !== "" ? parseFloat(maxRaw) : null;
+  const sort   = document.getElementById("sortSelect").value;
+
+  let filtered = allProperties.filter(p => {
+    const price       = parseFloat(p.price) || 0;
+    const matchSearch = !q    || p.title.toLowerCase().includes(q) || p.location.toLowerCase().includes(q);
+    const matchType   = !type || p.type === type;
+    const matchBed    = !bed  || (p.bedrooms && p.bedrooms >= bed);
+    const matchMin    = minP === null || price >= minP;
+    const matchMax    = maxP === null || price <= maxP;
+    return matchSearch && matchType && matchBed && matchMin && matchMax;
+  });
+
+  if(sort === "price_low")  filtered.sort((a,b) => a.price - b.price);
+  if(sort === "price_high") filtered.sort((a,b) => b.price - a.price);
+  if(sort === "beds")       filtered.sort((a,b) => (b.bedrooms||0) - (a.bedrooms||0));
+
+  renderCards(filtered);
+  updateStats(filtered);
+}
+
+function clearFilters(){
+  document.getElementById("searchInput").value = "";
+  document.getElementById("filterType").value  = "";
+  document.getElementById("filterBed").value   = "";
+  document.getElementById("minPrice").value    = "";
+  document.getElementById("maxPrice").value    = "";
+  document.getElementById("sortSelect").value  = "newest";
+  filterCards();
+}
+
+function renderCards(list){
+  const grid = document.getElementById("propertyGrid");
+  if(!list.length){
+    grid.innerHTML=`<div class="empty-state"><div class="icon">🏠</div><p>No properties match your filters.</p><a href="#" onclick="clearFilters();return false;">Clear filters</a></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p=>{
+    if(!p._regNo) p._regNo = "EE"+Math.floor(100000+Math.random()*900000);
+    const imgHtml = (p.images&&p.images.length)
+      ? `<div class="img-wrap"><img class="card-img" src="${p.images[0]}" alt="${p.title}" loading="lazy"></div>`
+      : `<div class="no-img">🏠</div>`;
+    return `<div class="property-card" onclick='openModal(${JSON.stringify(p).replace(/'/g,"&#39;")})'>
+        <span class="reg-badge">${p._regNo}</span>
+        ${p.type?`<span class="type-badge">${p.type}</span>`:''}
+        ${imgHtml}
+        <div class="card-body">
+          <div class="card-title">${p.title}</div>
+          <div class="card-loc">📍 ${p.location}</div>
+          <div class="card-price">${fmt(p.price)}</div>
+          <div class="card-meta">
+            ${p.bedrooms?`<span>🛏️ ${p.bedrooms} Beds</span>`:''}
+            ${p.bathrooms?`<span>🚿 ${p.bathrooms} Baths</span>`:''}
+            ${p.seller_name?`<span>👤 ${p.seller_name}</span>`:''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function updateStats(list){
+  if(!list.length){document.getElementById("statsBar").style.display="none";return;}
+  document.getElementById("statsBar").style.display="flex";
+  document.getElementById("statCount").textContent=list.length;
+  const avg=list.reduce((s,p)=>s+p.price,0)/list.length;
+  document.getElementById("statAvg").textContent=fmt(avg);
+  const locs={};
+  list.forEach(p=>{locs[p.location]=(locs[p.location]||0)+1;});
+  const top=Object.entries(locs).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById("statTop").textContent=top?top[0]:"—";
+}
+
+function openModal(p){
+  current=p; imgIndex=0;
+  currentRegNo=p._regNo||"EE"+Math.floor(100000+Math.random()*900000);
+  document.getElementById("mTitle").textContent=p.title;
+  document.getElementById("mPrice").textContent=fmt(p.price);
+  document.getElementById("mLoc").textContent=p.location||"—";
+  document.getElementById("mType").textContent=p.type||"—";
+  document.getElementById("mBed").textContent=p.bedrooms||"—";
+  document.getElementById("mBath").textContent=p.bathrooms||"—";
+  document.getElementById("mSeller").textContent=p.seller_name||"—";
+  document.getElementById("mPhone").textContent=p.seller_phone||"—";
+  document.getElementById("mDesc").textContent=p.description||"";
+  const dots=document.getElementById("imgDots");
+  dots.innerHTML=(p.images||[]).map((_,i)=>`<div class="dot${i===0?' active':''}" onclick="jumpImg(${i})"></div>`).join('');
+  updateModalImg();
+  document.getElementById("propModal").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function updateModalImg(){
+  const img=document.getElementById("modalImg");
+  const wrap=document.getElementById("modalImgWrap");
+  if(current.images&&current.images.length){
+    img.src=current.images[imgIndex];img.style.display="block";wrap.style.display="block";
+    document.querySelectorAll("#imgDots .dot").forEach((d,i)=>d.classList.toggle("active",i===imgIndex));
+  }else{wrap.style.display="none";}
+}
+function nextImg(){if(!current.images||!current.images.length)return;imgIndex=(imgIndex+1)%current.images.length;updateModalImg();}
+function prevImg(){if(!current.images||!current.images.length)return;imgIndex=(imgIndex-1+current.images.length)%current.images.length;updateModalImg();}
+function jumpImg(i){imgIndex=i;updateModalImg();}
+function closeModal(){document.getElementById("propModal").classList.remove("open");document.body.style.overflow="";}
+
+function setInterest(type){
+  currentInterest=type;
+  document.getElementById("btnBuy").classList.toggle("active",  type==="Buy");
+  document.getElementById("btnRent").classList.toggle("active", type==="Rent");
+}
+
+function openRegister(){
+  closeModal();
+  document.getElementById("rPropName").value  = current.title;
+  document.getElementById("rRegNo").value     = currentRegNo;
+  document.getElementById("rPrice").value     = fmt(current.price);
+  document.getElementById("rUserName").value  = "";
+  document.getElementById("rUserPhone").value = "";
+  document.getElementById("rUserEmail").value = "";
+  // Reset phone hint
+  const hint = document.getElementById("phoneHint");
+  hint.className = "phone-hint";
+  hint.textContent = "";
+  document.getElementById("rUserPhone").classList.remove("valid","invalid");
+  setInterest("Buy");
+  document.getElementById("regOverlay").classList.add("open");
+}
+function closeReg(){document.getElementById("regOverlay").classList.remove("open");}
+
+/* ── PHONE VALIDATION ── */
+function validatePhone(el) {
+  // Strip non-digits, enforce max 10
+  el.value = el.value.replace(/\D/g, '').slice(0, 10);
+
+  const hint = document.getElementById("phoneHint");
+  el.classList.remove("valid", "invalid");
+  hint.className = "phone-hint";
+  hint.textContent = "";
+
+  if (!el.value) return;
+
+  if (el.value.length === 10) {
+    el.classList.add("valid");
+    hint.classList.add("show-hint", "hint-ok");
+    hint.textContent = "✓ Valid phone number";
+  } else {
+    el.classList.add("invalid");
+    hint.classList.add("show-hint", "hint-err");
+    hint.textContent = `✗ ${el.value.length}/10 digits entered`;
+  }
+}
+
+async function submitReg(){
+  const name  = document.getElementById("rUserName").value.trim();
+  const phone = document.getElementById("rUserPhone").value.trim();
+  const email = document.getElementById("rUserEmail").value.trim();
+
+  if (!name)                        { alert("Please enter your name."); return; }
+  if (!/^\d{10}$/.test(phone))      { alert("Please enter a valid 10-digit phone number."); return; }
+  if (!email || !email.includes("@")){ alert("Please enter a valid email address."); return; }
+
+  const btn = document.getElementById("regSubmitBtn");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Sending email…';
+
+  try{
+    const res  = await fetch("/register_interest",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        buyer_name:  name,
+        buyer_phone: phone,
+        buyer_email: email,
+        interest:    currentInterest,
+        reg_no:      currentRegNo,
+        property:{
+          title:        current.title,
+          location:     current.location,
+          type:         current.type         || "—",
+          price:        current.price,
+          bedrooms:     current.bedrooms     || "—",
+          bathrooms:    current.bathrooms    || "—",
+          description:  current.description  || "",
+          seller_name:  current.seller_name  || "—",
+          seller_phone: current.seller_phone || "—",
+          seller_email: current.seller_email || "",
+          image:        (current.images && current.images.length) ? current.images[0] : ""
+        }
+      })
+    });
+    const data = await res.json();
+    closeReg();
+    showSuccess(name, email, data.email_sent);
+  }catch(e){
+    closeReg();
+    showSuccess(name, email, false);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = "Send Confirmation Email →";
+}
+
+function showSuccess(name, email, emailSent){
+  const sImg = document.getElementById("successImg");
+  if(current.images && current.images.length){sImg.src=current.images[0];sImg.style.display="block";}
+  else{sImg.style.display="none";}
+  document.getElementById("successText").innerHTML=
+    `<b>${name}</b>, your <b>${currentInterest}</b> interest has been registered for<br><b>${current.title}</b><br>
+    <span style="font-size:12px;color:#666;margin-top:6px;display:block">📍 ${current.location} · ${fmt(current.price)}</span>`;
+  document.getElementById("successRegNo").textContent = "Reg No: " + currentRegNo;
+  if(emailSent){
+    document.getElementById("emailSentBadge").style.display="inline-flex";
+    document.getElementById("successEmailNote").textContent=`Confirmation email sent to ${email} with owner contact details.`;
+  }else{
+    document.getElementById("emailSentBadge").style.display="none";
+    document.getElementById("successEmailNote").textContent=`Contact owner: ${current.seller_name} — ${current.seller_phone}`;
+  }
+  document.getElementById("successOverlay").classList.add("open");
+}
+
+document.getElementById("propModal").addEventListener("click",function(e){if(e.target===this)closeModal();});
+document.getElementById("regOverlay").addEventListener("click",function(e){if(e.target===this)closeReg();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closeReg();}});
+
+loadProperties();
+</script>
+</body>
+</html>

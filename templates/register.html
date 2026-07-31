@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EasyEstate — Create Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --gold:#d4af37;--gold2:#ffd700;--gold-dim:rgba(212,175,55,0.12);
+  --bg:#080808;--surface:#111;--surface2:#161616;
+  --border:rgba(212,175,55,0.2);--text:#f0f0f0;--muted:#666;--green:#22c55e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.bg-layer{position:fixed;inset:0;background:url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1600') center/cover no-repeat;opacity:0.18;transform:scale(1.04);}
+.bg-overlay{position:fixed;inset:0;background:linear-gradient(135deg,rgba(8,8,8,0.97) 0%,rgba(8,8,8,0.88) 100%);}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(212,175,55,0.08),transparent 70%);top:-150px;right:-100px;animation:drift 12s ease-in-out infinite alternate;}
+.orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(212,175,55,0.05),transparent 70%);bottom:-100px;left:-100px;animation:drift2 10s ease-in-out infinite alternate;}
+@keyframes drift{from{transform:translate(0,0);}to{transform:translate(-40px,30px);}}
+@keyframes drift2{from{transform:translate(0,0);}to{transform:translate(40px,-30px);}}
+.card{position:relative;z-index:10;display:flex;width:900px;max-width:96vw;min-height:580px;border-radius:24px;overflow:hidden;border:1px solid var(--border);box-shadow:0 40px 80px rgba(0,0,0,0.7);animation:rise 0.9s cubic-bezier(0.16,1,0.3,1) both;}
+@keyframes rise{from{opacity:0;transform:translateY(40px) scale(0.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+.card.flip{animation:flipOut 0.7s ease forwards;}
+@keyframes flipOut{0%{transform:rotateY(0deg);opacity:1;}100%{transform:rotateY(90deg);opacity:0;}}
+.left{width:42%;position:relative;overflow:hidden;}
+.left-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800') center/cover no-repeat;transform:scale(1.05);transition:transform 8s ease;}
+.card:hover .left-bg{transform:scale(1.1);}
+.left-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.25) 50%,rgba(0,0,0,0.7) 100%);}
+.left-content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:34px;}
+.left-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);border:1px solid rgba(212,175,55,0.3);border-radius:30px;padding:7px 16px;width:fit-content;}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s ease infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.left-badge span{font-size:11px;color:rgba(255,255,255,0.7);letter-spacing:1.5px;text-transform:uppercase;}
+.left-bottom h2{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:700;color:#fff;line-height:1.15;margin-bottom:10px;}
+.left-bottom h2 em{font-style:italic;color:var(--gold2);}
+.left-line{width:50px;height:2px;background:linear-gradient(90deg,var(--gold),transparent);margin:12px 0;}
+.left-bottom p{font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.65;}
+.right{flex:1;background:var(--surface);display:flex;flex-direction:column;justify-content:center;padding:44px 40px;border-left:1px solid var(--border);overflow-y:auto;}
+.right-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+.right-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.right-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:28px;}
+.avatar-section{display:flex;align-items:center;gap:18px;margin-bottom:24px;padding:16px 18px;background:var(--surface2);border:1px solid rgba(255,255,255,0.05);border-radius:12px;cursor:pointer;transition:border-color 0.2s;}
+.avatar-section:hover{border-color:var(--gold);}
+.avatar-img-wrap{position:relative;flex-shrink:0;}
+.avatar-img-wrap img{width:62px;height:62px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);}
+.avatar-edit{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:var(--gold);color:#000;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.avatar-info .av-title{font-size:13px;color:var(--text);font-weight:500;margin-bottom:3px;}
+.avatar-info .av-sub{font-size:11px;color:var(--muted);}
+#imageUpload{display:none;}
+.field{position:relative;margin-bottom:16px;}
+.field label{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.field input{width:100%;padding:12px 16px;background:var(--surface2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.25s,box-shadow 0.25s;}
+.field input::placeholder{color:#2e2e2e;}
+.field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,0.1);}
+.error-msg{background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.2);color:#ff6b6b;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none;}
+.error-msg.show{display:block;}
+.success-msg{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);color:#4ade80;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none;}
+.success-msg.show{display:block;}
+.reg-btn{width:100%;padding:14px;background:linear-gradient(135deg,#16a34a,var(--green));color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;letter-spacing:0.5px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s,transform 0.2s;position:relative;overflow:hidden;margin-top:4px;}
+.reg-btn:hover{opacity:0.9;transform:scale(1.01);}
+.reg-btn:disabled{opacity:0.55;cursor:not-allowed;}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.25);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:7px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0;}
+.divider-line{flex:1;height:1px;background:rgba(255,255,255,0.05);}
+.divider span{font-size:11px;color:var(--muted);white-space:nowrap;}
+.login-btn{width:100%;padding:13px;background:transparent;border:1px solid var(--border);border-radius:10px;font-size:14px;color:var(--gold);cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s,border-color 0.2s;}
+.login-btn:hover{background:var(--gold-dim);border-color:var(--gold);}
+@media(max-width:700px){.left{display:none;}.right{padding:32px 24px;border-left:none;border-radius:24px;}.card{min-height:auto;}}
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-overlay"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div class="card" id="mainCard">
+  <!-- LEFT -->
+  <div class="left">
+    <div class="left-bg"></div>
+    <div class="left-overlay"></div>
+    <div class="left-content">
+      <div class="left-badge"><div class="badge-dot"></div><span>Join Free Today</span></div>
+      <div class="left-bottom">
+        <h2>Start Your<br><em>Property</em> Journey</h2>
+        <div class="left-line"></div>
+        <p>Create your free account and get instant access to thousands of premium property listings across India.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="right-eyebrow">New Account</div>
+    <div class="right-title">Create Account</div>
+    <p class="right-sub">Join EasyEstate — it's free and takes 30 seconds</p>
+
+    <!-- Avatar Upload -->
+    <div class="avatar-section" onclick="document.getElementById('imageUpload').click()">
+      <div class="avatar-img-wrap">
+        <img id="preview" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
+        <div class="avatar-edit">✎</div>
+      </div>
+      <div class="avatar-info">
+        <div class="av-title">Upload Profile Photo</div>
+        <div class="av-sub">Click to choose · JPG, PNG supported</div>
+      </div>
+    </div>
+    <input type="file" id="imageUpload" accept="image/*">
+
+    <div class="error-msg"   id="errMsg"></div>
+    <div class="success-msg" id="okMsg"></div>
+
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" id="name" placeholder="John Doe" autocomplete="name">
+    </div>
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Phone Number</label>
+      <input type="tel" id="phone" placeholder="+91 98765 43210" autocomplete="tel">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Min. 6 characters" autocomplete="new-password">
+    </div>
+
+    <button class="reg-btn" id="regBtn" onclick="register()">Create Account →</button>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span>Already have an account?</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <button class="login-btn" onclick="goLogin()">Sign In Instead</button>
+  </div>
+</div>
+
+<script>
+// Image preview
+document.getElementById("imageUpload").addEventListener("change", function(){
+  const reader = new FileReader();
+  reader.onload = function(e){
+    document.getElementById("preview").src = e.target.result;
+    localStorage.setItem("profileImage", e.target.result);
+  };
+  reader.readAsDataURL(this.files[0]);
+});
+
+async function register(){
+  const name     = document.getElementById("name").value.trim();
+  const email    = document.getElementById("email").value.trim();
+  const phone    = document.getElementById("phone").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const errMsg   = document.getElementById("errMsg");
+  const okMsg    = document.getElementById("okMsg");
+  const btn      = document.getElementById("regBtn");
+
+  errMsg.classList.remove("show");
+  okMsg.classList.remove("show");
+
+  if(!name || !email || !password){
+    errMsg.textContent = "⚠️ Please fill in all required fields.";
+    errMsg.classList.add("show");
+    return;
+  }
+  if(!email.includes("@")){
+    errMsg.textContent = "⚠️ Please enter a valid email address.";
+    errMsg.classList.add("show");
+    return;
+  }
+  if(password.length < 6){
+    errMsg.textContent = "⚠️ Password must be at least 6 characters.";
+    errMsg.classList.add("show");
+    return;
+  }
+
+  btn.disabled  = true;
+  btn.innerHTML = '<span class="spinner"></span>Creating account…';
+
+  try{
+    const res    = await fetch("/register",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ name, email, phone, password })
+    });
+    const result = await res.json();
+
+    if(result.error){
+      errMsg.textContent = "❌ " + result.error;
+      errMsg.classList.add("show");
+      btn.disabled  = false;
+      btn.innerHTML = "Create Account →";
+      return;
+    }
+
+    // Success
+    localStorage.setItem("name",  name);
+    localStorage.setItem("email", email);
+    okMsg.textContent = "✅ Account created! Welcome to EasyEstate.";
+    okMsg.classList.add("show");
+    btn.innerHTML = "✓ Account Created";
+
+    setTimeout(()=>{
+      document.getElementById("mainCard").classList.add("flip");
+      setTimeout(()=>{ window.location.href="/loginpage"; }, 700);
+    }, 1000);
+
+  }catch(e){
+    errMsg.textContent = "⚠️ Cannot reach server. Make sure Flask is running.";
+    errMsg.classList.add("show");
+    btn.disabled  = false;
+    btn.innerHTML = "Create Account →";
+  }
+}
+
+function goLogin(){
+  document.getElementById("mainCard").classList.add("flip");
+  setTimeout(()=>{ window.location.href="/loginpage"; }, 700);
+}
+
+document.addEventListener("keydown", e=>{
+  if(e.key === "Enter") register();
+});
+</script>
+</body>
+</html>

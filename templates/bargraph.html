@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyEstate | Property Price Analytics</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+ 
+body {
+  background: #0f0f0f;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+ 
+/* ── TOP STATS ── */
+.top-stats {
+  display: flex;
+  gap: 60px;
+  padding: 32px 50px 18px;
+  border-bottom: 1px solid #1e1e1e;
+  flex-wrap: wrap;
+}
+ 
+.stat { display: flex; flex-direction: column; gap: 5px; }
+ 
+.stat-label {
+  font-size: 11px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+ 
+.stat-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: #e0e0e0;
+  letter-spacing: -0.5px;
+}
+ 
+.stat-value.teal { color: #2fe8b0; }
+.stat-value.gold { color: #d4af37; }
+ 
+/* ── LEGEND ── */
+.legend {
+  display: flex;
+  gap: 24px;
+  padding: 18px 50px 4px;
+  align-items: center;
+}
+ 
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #aaa;
+}
+ 
+.legend-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+ 
+.dot-teal { background: #2fe8b0; }
+.dot-grey { background: #c0c0c0; }
+ 
+/* ── CHART AREA ── */
+.chart-container {
+  flex: 1;
+  padding: 14px 40px 24px;
+  position: relative;
+  min-height: 360px;
+}
+ 
+/* ── BOTTOM DESCRIPTION ── */
+.description {
+  padding: 16px 50px 28px;
+  font-size: 14px;
+  color: #555;
+  border-top: 1px solid #1a1a1a;
+  line-height: 1.6;
+}
+ 
+.description b { color: #999; }
+ 
+/* ── EMPTY STATE ── */
+.empty-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  color: #444;
+  padding: 80px 20px;
+  text-align: center;
+}
+.empty-icon { font-size: 54px; opacity: 0.35; }
+.empty-wrap p { font-size: 15px; color: #555; }
+.empty-wrap a {
+  margin-top: 6px;
+  padding: 10px 30px;
+  border: 1px solid #2a2a2a;
+  color: #2fe8b0;
+  text-decoration: none;
+  border-radius: 30px;
+  font-size: 13px;
+  transition: border-color 0.2s;
+}
+.empty-wrap a:hover { border-color: #2fe8b0; }
+</style>
+</head>
+<body>
+ 
+<!-- TOP STAT NUMBERS (matches reference: ₹10,000 / ₹36,610 / ₹46,610) -->
+<div class="top-stats">
+  <div class="stat">
+    <span class="stat-label">Lowest Area Price</span>
+    <span class="stat-value" id="minVal">—</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Average Price</span>
+    <span class="stat-value teal" id="avgVal">—</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Highest Area Price</span>
+    <span class="stat-value gold" id="maxVal">—</span>
+  </div>
+  <div class="stat" style="margin-left:auto">
+    <span class="stat-label">Total Listings</span>
+    <span class="stat-value" id="totalVal">—</span>
+  </div>
+</div>
+ 
+<!-- LEGEND (matches reference: Interest earned / Principal) -->
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-dot dot-teal"></div>
+    Price Above Average
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot dot-grey"></div>
+    Price At / Below Average
+  </div>
+</div>
+ 
+<!-- CHART -->
+<div class="chart-container" id="chartContainer">
+  <canvas id="barChart" style="height:340px"></canvas>
+</div>
+ 
+<!-- DESCRIPTION LINE (matches reference bottom text) -->
+<div class="description">
+  <b>Property price range</b> shows the average listing price per area submitted through the Seller Panel.
+  Teal portions represent prices above the overall average — grey is the base level.
+  Areas are sorted from lowest to highest price.
+</div>
+ 
+<script>
+function fmt(v) {
+  if (v == null) return '—';
+  if (v >= 10000000) return '₹' + (v / 10000000).toFixed(2) + ' Cr';
+  if (v >= 100000)   return '₹' + (v / 100000).toFixed(1) + ' L';
+  if (v >= 1000)     return '₹' + (v / 1000).toFixed(0) + 'K';
+  return '₹' + v;
+}
+ 
+let chartInstance = null;
+ 
+async function load() {
+  try {
+    const res  = await fetch('/api/bargraph_data');
+    const data = await res.json();
+    const locs = data.by_location || [];
+ 
+    if (!locs.length) {
+      document.getElementById('chartContainer').innerHTML = `
+        <div class="empty-wrap">
+          <div class="empty-icon">🏠</div>
+          <p>No properties added yet.</p>
+          <a href="/seller">Go to Seller Panel →</a>
+        </div>`;
+ 
+      // Zero out stats
+      ['minVal','avgVal','maxVal','totalVal'].forEach(id =>
+        document.getElementById(id).textContent = '0'
+      );
+      return;
+    }
+ 
+    // Sort ascending (bars grow left → right like reference image)
+    locs.sort((a, b) => a.avg_price - b.avg_price);
+ 
+    const labels = locs.map(r => r.location);
+    const prices = locs.map(r => r.avg_price);
+    const counts = locs.map(r => r.count);
+ 
+    const avg   = prices.reduce((s, v) => s + v, 0) / prices.length;
+    const min   = Math.min(...prices);
+    const max   = Math.max(...prices);
+    const total = locs.reduce((s, r) => s + r.count, 0);
+ 
+    // Update stats
+    document.getElementById('minVal').textContent  = fmt(min);
+    document.getElementById('avgVal').textContent  = fmt(avg);
+    document.getElementById('maxVal').textContent  = fmt(max);
+    document.getElementById('totalVal').textContent = total;
+ 
+    // Stacked datasets:
+    // Dataset 1 (grey)  = base portion (up to avg, or full price if below avg)
+    // Dataset 2 (teal)  = extra portion above avg (0 if below avg)
+    const baseData = prices.map(p => Math.min(p, avg));
+    const topData  = prices.map(p => Math.max(0, p - avg));
+ 
+    Chart.defaults.color = '#555';
+    Chart.defaults.font.family = 'Arial';
+ 
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+ 
+    chartInstance = new Chart(document.getElementById('barChart'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Base',
+            data: baseData,
+            backgroundColor: '#c0c0c0',
+            borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 5, bottomRight: 5 },
+            borderSkipped: false,
+          },
+          {
+            label: 'Above Avg',
+            data: topData,
+            backgroundColor: '#2fe8b0',
+            borderRadius: { topLeft: 5, topRight: 5, bottomLeft: 0, bottomRight: 0 },
+            borderSkipped: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          duration: 1000,
+          easing: 'easeOutQuart'
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1c1c1c',
+            borderColor: '#2a2a2a',
+            borderWidth: 1,
+            padding: 14,
+            titleColor: '#eee',
+            bodyColor: '#aaa',
+            callbacks: {
+              title: (items) => items[0].label,
+              label: (item) => {
+                const idx   = item.dataIndex;
+                const total = prices[idx];
+                const cnt   = counts[idx];
+                const diff  = total - avg;
+                return [
+                  '  Avg Price : ' + fmt(total),
+                  '  Properties: ' + cnt + ' listed',
+                  '  vs Average: ' + (diff >= 0 ? '+' : '') + fmt(diff)
+                ];
+              },
+              labelColor: (item) => ({
+                borderColor: 'transparent',
+                backgroundColor: item.datasetIndex === 1 ? '#2fe8b0' : '#c0c0c0'
+              })
+            }
+          }
+        },
+        scales: {
+          x: {
+            stacked: true,
+            grid: { display: false },
+            border: { display: false },
+            ticks: {
+              color: '#777',
+              font: { size: 12 },
+              maxRotation: 30,
+              minRotation: 0
+            }
+          },
+          y: {
+            stacked: true,
+            grid: {
+              color: 'rgba(255,255,255,0.04)',
+              drawBorder: false
+            },
+            border: { display: false, dash: [4, 4] },
+            ticks: {
+              color: '#555',
+              font: { size: 11 },
+              callback: v => fmt(v)
+            }
+          }
+        }
+      }
+    });
+ 
+  } catch (e) {
+    console.error(e);
+    document.getElementById('chartContainer').innerHTML = `
+      <div class="empty-wrap">
+        <div class="empty-icon">⚠️</div>
+        <p>Could not load data. Make sure Flask server is running.</p>
+      </div>`;
+  }
+}
+ 
+load();
+setInterval(load, 20000);
+</script>
+ 
+</body>
+</html>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

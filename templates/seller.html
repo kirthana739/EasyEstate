@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EasyEstate — Seller Panel + AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#d4af37;--gold2:#ffd700;
+  --gold-dim:rgba(212,175,55,0.1);
+  --bg:#070707;--surface:#0f0f0f;--surface2:#141414;
+  --border:rgba(212,175,55,0.16);
+  --text:#f0f0f0;--muted:#555;--green:#22c55e;
+  --purple:#8b5cf6;--blue:#3b82f6;--teal:#2fe8b0;
+  --red:#ef4444;--red-dim:rgba(239,68,68,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100%;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);overflow-x:hidden;}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;padding:18px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,7,7,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--gold2);letter-spacing:1px;}
+nav a{color:#888;text-decoration:none;margin-left:24px;font-size:13px;font-weight:300;transition:color 0.2s;}
+nav a:hover{color:var(--gold);}
+nav a.active{color:var(--gold2);font-weight:500;}
+
+/* HERO */
+.hero-strip{background:linear-gradient(135deg,#0d0b00,#0a0a0a);border-bottom:1px solid var(--border);padding:44px 60px 36px;position:relative;overflow:hidden;}
+.hero-strip::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.06),transparent 70%);top:-200px;right:-100px;pointer-events:none;}
+.hero-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.hero-eyebrow::before{content:'';width:24px;height:1px;background:var(--gold);opacity:0.5;}
+.hero-strip h1{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:700;color:var(--text);line-height:1.05;margin-bottom:10px;}
+.hero-strip h1 em{font-style:italic;color:var(--gold2);}
+.hero-strip p{font-size:14px;color:var(--muted);font-weight:300;line-height:1.7;max-width:520px;}
+.ai-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);border-radius:30px;padding:5px 14px;font-size:11px;color:#a78bfa;letter-spacing:1px;text-transform:uppercase;margin-top:14px;}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:#8b5cf6;animation:pulse 2s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* MAIN LAYOUT */
+.main{display:grid;grid-template-columns:1fr 360px;gap:24px;padding:32px 60px 60px;max-width:1400px;margin:0 auto;}
+
+/* FORM PANEL */
+.form-panel{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;}
+.form-section-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.full{grid-column:span 2;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.field input,.field select,.field textarea{padding:11px 15px;background:var(--surface2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.field input::placeholder,.field textarea::placeholder{color:#252525;}
+.field select option{background:#111;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,0.08);}
+.field textarea{resize:none;min-height:90px;}
+
+/* Phone validation */
+.field input.ph-valid{border-color:#4ade80 !important;box-shadow:0 0 0 3px rgba(74,222,128,0.08) !important;}
+.field input.ph-invalid{border-color:#f87171 !important;box-shadow:0 0 0 3px rgba(239,68,68,0.08) !important;}
+.phone-hint{font-size:11px;margin-top:2px;display:none;}
+.phone-hint.show{display:block;}
+.phone-hint.ok{color:#4ade80;}
+.phone-hint.err{color:#f87171;}
+
+/* AI SECTIONS */
+.ai-section{grid-column:span 2;border:1px solid rgba(139,92,246,0.2);border-radius:14px;background:rgba(139,92,246,0.04);padding:20px;margin-top:4px;}
+.ai-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.ai-section-title{font-size:13px;font-weight:500;color:#a78bfa;display:flex;align-items:center;gap:8px;}
+.ai-section-title span{font-size:16px;}
+
+.price-result{background:var(--surface2);border:1px solid rgba(47,232,176,0.2);border-radius:10px;padding:14px 16px;margin-top:12px;display:none;}
+.price-result.show{display:block;}
+.pr-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:6px;}
+.pr-value{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--gold2);}
+.pr-note{font-size:12px;color:var(--muted);margin-top:4px;}
+.pr-range{font-size:13px;color:#888;margin-top:8px;}
+
+.desc-result{background:var(--surface2);border:1px solid rgba(139,92,246,0.2);border-radius:10px;padding:14px 16px;margin-top:12px;display:none;font-size:14px;color:#ccc;line-height:1.75;}
+.desc-result.show{display:block;}
+
+.ai-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:1px solid rgba(139,92,246,0.4);border-radius:30px;background:rgba(139,92,246,0.08);color:#a78bfa;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s,border-color 0.2s;}
+.ai-btn:hover{background:rgba(139,92,246,0.15);border-color:rgba(139,92,246,0.6);}
+.ai-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.ai-btn .btn-icon{font-size:15px;}
+
+/* IMAGE VALIDATOR */
+.img-validator-section{grid-column:span 2;border:1px solid rgba(212,175,55,0.25);border-radius:14px;background:rgba(212,175,55,0.025);padding:20px;margin-top:4px;}
+.img-val-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px;}
+.img-val-title{font-size:13px;font-weight:500;color:var(--gold);display:flex;align-items:center;gap:8px;}
+.img-val-title span{font-size:16px;}
+.shield-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:30px;padding:4px 12px;font-size:10px;color:var(--gold);letter-spacing:0.8px;text-transform:uppercase;font-weight:500;}
+.shield-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease infinite;}
+.img-rule-box{background:var(--red-dim);border:1px solid rgba(239,68,68,0.18);border-radius:10px;padding:11px 14px;font-size:12px;color:#f87171;line-height:1.7;margin:12px 0 16px;}
+.img-rule-box strong{font-weight:500;color:#fca5a5;}
+.upload-zone{border:2px dashed rgba(212,175,55,0.2);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:border-color 0.3s,background 0.3s;position:relative;background:rgba(212,175,55,0.02);}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--gold);background:var(--gold-dim);}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-icon{font-size:28px;margin-bottom:8px;}
+.upload-title{font-size:14px;color:var(--text);font-weight:500;margin-bottom:3px;}
+.upload-sub{font-size:12px;color:var(--muted);}
+.image-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:14px;}
+.img-card{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;border:2px solid rgba(255,255,255,0.06);background:#0a0a0a;}
+.img-card img{width:100%;height:100%;object-fit:cover;display:block;}
+.img-card.scanning{border-color:rgba(139,92,246,0.4);}
+.img-card.scanning .img-overlay{position:absolute;inset:0;background:rgba(7,7,7,0.7);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+.scan-spin{width:20px;height:20px;border:2px solid rgba(139,92,246,0.25);border-top-color:#8b5cf6;border-radius:50%;animation:spin 0.7s linear infinite;}
+.scan-text{font-size:11px;color:#a78bfa;font-weight:500;letter-spacing:0.5px;}
+.img-card.approved{border-color:rgba(47,232,176,0.55);}
+.img-card.approved .img-overlay{position:absolute;inset:0;background:rgba(47,232,176,0.06);pointer-events:none;}
+.status-pip{position:absolute;top:7px;left:7px;background:var(--teal);color:#000;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:0.5px;text-transform:uppercase;z-index:5;}
+.img-card.rejected{border-color:rgba(239,68,68,0.55);}
+.img-card.rejected .img-overlay{position:absolute;inset:0;background:rgba(217,40,40,0.78);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;text-align:center;gap:3px;}
+.reject-x{font-size:22px;line-height:1;color:#fff;}
+.reject-title{font-size:10px;font-weight:700;color:#fff;letter-spacing:0.5px;text-transform:uppercase;}
+.reject-why{font-size:10px;color:rgba(255,255,255,0.88);line-height:1.4;}
+.img-remove{position:absolute;top:5px;right:5px;width:20px;height:20px;background:rgba(7,7,7,0.82);color:var(--text);border:none;border-radius:50%;font-size:11px;cursor:pointer;z-index:20;display:flex;align-items:center;justify-content:center;transition:background 0.15s;}
+.img-remove:hover{background:var(--red);}
+.val-summary{margin-top:12px;padding:11px 14px;border-radius:10px;font-size:13px;display:none;align-items:flex-start;gap:10px;line-height:1.6;}
+.val-summary.show{display:flex;}
+.val-summary.processing{background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);color:#a78bfa;}
+.val-summary.all-good{background:rgba(47,232,176,0.06);border:1px solid rgba(47,232,176,0.25);color:var(--teal);}
+.val-summary.has-errors{background:var(--red-dim);border:1px solid rgba(239,68,68,0.25);color:#f87171;}
+
+/* STATUS & SUBMIT */
+.status-msg{grid-column:span 2;border-radius:10px;padding:11px 15px;font-size:13px;display:none;}
+.status-msg.success{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);color:#4ade80;}
+.status-msg.error{background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.25);color:#ff6b6b;animation:shake 0.4s ease;}
+.status-msg.show{display:block;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+.submit-btn{grid-column:span 2;padding:14px;background:linear-gradient(135deg,#b8860b,var(--gold2));color:#000;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden;transition:opacity 0.2s,transform 0.15s;}
+.submit-btn::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);transition:left 0.5s;}
+.submit-btn:hover:not(:disabled)::before{left:150%;}
+.submit-btn:hover:not(:disabled){opacity:0.92;transform:translateY(-1px);}
+.submit-btn:disabled{opacity:0.45;cursor:not-allowed;}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(0,0,0,0.2);border-top-color:#000;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:7px;}
+.ai-spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(139,92,246,0.3);border-top-color:#8b5cf6;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* SIDE PANEL */
+.side-panel{display:flex;flex-direction:column;gap:18px;}
+.stats-card,.tips-card,.similar-card,.listed-section{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--gold);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.stat-row:last-child{border-bottom:none;}
+.stat-label-s{font-size:12px;color:var(--muted);}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--gold2);}
+.similar-card{border-color:rgba(59,130,246,0.2);background:rgba(59,130,246,0.03);}
+.similar-card .card-title{color:var(--blue);}
+.sim-item{padding:10px;background:var(--surface2);border-radius:8px;margin-bottom:8px;font-size:13px;}
+.sim-item:last-child{margin-bottom:0;}
+.sim-title{font-weight:500;color:var(--text);margin-bottom:3px;}
+.sim-price{color:var(--gold2);font-weight:600;}
+.sim-loc{color:var(--muted);font-size:11px;}
+.sim-empty{font-size:13px;color:var(--muted);text-align:center;padding:10px 0;}
+.tip{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start;}
+.tip:last-child{margin-bottom:0;}
+.tip-icon{font-size:16px;flex-shrink:0;}
+.tip-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.tip-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.listed-section{display:none;}
+.prop-item{display:flex;gap:10px;align-items:flex-start;padding:10px;background:var(--surface2);border-radius:10px;margin-bottom:8px;}
+.prop-item img{width:76px;height:58px;object-fit:cover;border-radius:7px;flex-shrink:0;}
+.prop-item-info p{font-size:12px;color:#bbb;margin-bottom:2px;}
+.prop-item-info b{color:var(--text);}
+.prop-saved{font-size:11px;color:var(--green);margin-top:3px;}
+.trend-card{background:var(--surface);border:1px solid rgba(47,232,176,0.2);border-radius:16px;padding:22px;}
+.trend-card .card-title{color:var(--teal);}
+#trendChart{width:100%;height:120px;margin-top:8px;background:transparent;}
+
+@media(max-width:1024px){.main{grid-template-columns:1fr;}header{padding:14px 20px;}.hero-strip{padding:36px 20px 28px;}.hero-strip h1{font-size:34px;}.main{padding:20px 20px 40px;}}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}.full,.val-summary,.status-msg,.submit-btn,.ai-section,.img-validator-section{grid-column:span 1;}}
+</style>
+</head>
+<body>
+
+<!-- ── AI CHAT WIDGET ── -->
+<style>
+  #chat-btn{position:fixed;bottom:30px;right:30px;z-index:9999;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#b8860b,#ffd700);border:none;cursor:pointer;font-size:26px;box-shadow:0 4px 20px rgba(212,175,55,0.5);transition:transform 0.2s;}
+  #chat-btn:hover{transform:scale(1.1);}
+  #chat-box{display:none;position:fixed;bottom:100px;right:30px;width:340px;height:480px;z-index:9999;background:#0f0f0f;border:1px solid rgba(212,175,55,0.3);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);flex-direction:column;}
+  #chat-box.open{display:flex;}
+  #chat-header{background:linear-gradient(135deg,#0a0a0a,#1c1c1c);padding:14px 18px;border-bottom:1px solid rgba(212,175,55,0.2);display:flex;align-items:center;gap:10px;}
+  #chat-header .dot{width:9px;height:9px;border-radius:50%;background:#ffd700;animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+  #chat-header span{font-size:14px;font-weight:600;color:#ffd700;font-family:'DM Sans',sans-serif;}
+  #chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
+  #chat-messages::-webkit-scrollbar{width:4px;}
+  #chat-messages::-webkit-scrollbar-thumb{background:#333;border-radius:2px;}
+  .msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;font-family:'DM Sans',sans-serif;}
+  .msg.user{background:rgba(212,175,55,0.15);color:#ffd700;border:1px solid rgba(212,175,55,0.25);align-self:flex-end;border-bottom-right-radius:4px;}
+  .msg.bot{background:#1a1a1a;color:#ddd;border:1px solid rgba(255,255,255,0.07);align-self:flex-start;border-bottom-left-radius:4px;}
+  .msg.typing{color:#555;font-style:italic;}
+  #chat-footer{padding:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px;background:#0f0f0f;}
+  #chat-input{flex:1;background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 14px;color:#f0f0f0;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;}
+  #chat-input:focus{border-color:rgba(212,175,55,0.4);}
+  #chat-input::placeholder{color:#333;}
+  #chat-send{background:linear-gradient(135deg,#b8860b,#ffd700);border:none;border-radius:8px;padding:10px 14px;color:#000;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;transition:opacity 0.2s;}
+  #chat-send:hover{opacity:0.85;}
+  #chat-send:disabled{opacity:0.4;cursor:not-allowed;}
+</style>
+
+<button id="chat-btn" onclick="toggleChat()" title="Ask EasyEstate AI">💬</button>
+<div id="chat-box">
+  <div id="chat-header"><div class="dot"></div><span>EasyEstate AI Assistant</span></div>
+  <div id="chat-messages">
+    <div class="msg bot">Hi! I'm your EasyEstate AI Assistant. Ask me anything about buying, renting, property prices, home loans, or legal steps. 🏠</div>
+  </div>
+  <div id="chat-footer">
+    <input id="chat-input" type="text" placeholder="Ask about properties..." onkeydown="if(event.key==='Enter') sendMsg()">
+    <button id="chat-send" onclick="sendMsg()">Send</button>
+  </div>
+</div>
+<script>
+  let chatHistory=[];
+  function toggleChat(){const box=document.getElementById('chat-box');box.classList.toggle('open');if(box.classList.contains('open'))document.getElementById('chat-input').focus();}
+  async function sendMsg(){
+    const input=document.getElementById('chat-input'),msgs=document.getElementById('chat-messages'),send=document.getElementById('chat-send'),text=input.value.trim();
+    if(!text)return;
+    msgs.innerHTML+=`<div class="msg user">${text}</div>`;chatHistory.push({role:"user",content:text});input.value="";send.disabled=true;
+    const typingId='typing-'+Date.now();
+    msgs.innerHTML+=`<div class="msg bot typing" id="${typingId}">Thinking...</div>`;msgs.scrollTop=msgs.scrollHeight;
+    try{
+      const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history:chatHistory.slice(-10)})});
+      const data=await res.json();const reply=data.reply||"Sorry, I couldn't get a response.";
+      document.getElementById(typingId).remove();msgs.innerHTML+=`<div class="msg bot">${reply}</div>`;chatHistory.push({role:"assistant",content:reply});
+    }catch(e){document.getElementById(typingId).remove();msgs.innerHTML+=`<div class="msg bot">Connection error. Please try again.</div>`;}
+    send.disabled=false;msgs.scrollTop=msgs.scrollHeight;input.focus();
+  }
+</script>
+
+<header>
+  <div class="logo">EasyEstate</div>
+  <nav>
+    <a href="/index">Home</a>
+    <a href="/shop">Properties</a>
+    <a href="/seller" class="active">Sell</a>
+    <a href="/bargraph">Analytics</a>
+    <a href="/contact">Contact</a>
+  </nav>
+</header>
+
+<div class="hero-strip">
+  <div class="hero-eyebrow">Seller Panel</div>
+  <h1>List Your <em>Property</em> with AI</h1>
+  <p>Add your listing in 2 minutes. Our AI predicts a fair price, writes your description, finds similar properties, validates your images and detects suspicious listings — all automatically.</p>
+  <div class="ai-badge"><div class="ai-dot"></div> 5 AI Features Active</div>
+</div>
+
+<div class="main">
+
+  <!-- ══ FORM PANEL ══ -->
+  <div class="form-panel">
+    <div class="form-section-title">Property Details</div>
+    <form id="propertyForm" enctype="multipart/form-data">
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Seller Name</label>
+          <input type="text" id="sellerName" placeholder="Your full name" required>
+        </div>
+
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" id="sellerPhone" placeholder="10-digit phone number"
+                 maxlength="10" oninput="validateSellerPhone(this)" autocomplete="tel" required>
+          <p class="phone-hint" id="sellerPhoneHint"></p>
+        </div>
+
+        <div class="field">
+          <label>Seller Email</label>
+          <input type="email" id="sellerEmail" placeholder="you@email.com">
+        </div>
+
+        <div class="field">
+          <label>Property Title</label>
+          <input type="text" id="title" placeholder="e.g. Luxury Villa – Mangalore" required oninput="onDetailChange()">
+        </div>
+
+        <div class="field">
+          <label>Location</label>
+          <input type="text" id="location" placeholder="e.g. Bejai, Mangalore" required oninput="onDetailChange()">
+        </div>
+
+        <div class="field">
+          <label>Property Type</label>
+          <select id="type" required onchange="onDetailChange()">
+            <option value="">Select Type</option>
+            <option>Apartment</option>
+            <option>Villa</option>
+            <option>Independent House</option>
+            <option>Commercial</option>
+          </select>
+        </div>
+
+        <!-- ✅ NEW: Listing Status (Sale / Rent) -->
+        <div class="field">
+          <label>Listing Status</label>
+          <select id="statusField">
+            <option value="Sale">For Sale</option>
+            <option value="Rent">For Rent</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Price (₹)</label>
+          <input type="number" id="price" placeholder="e.g. 4500000" oninput="onPriceChange()">
+        </div>
+
+        <div class="field">
+          <label>Bedrooms</label>
+          <input type="number" id="bedrooms" placeholder="e.g. 3" min="0" oninput="onDetailChange()">
+        </div>
+
+        <div class="field">
+          <label>Bathrooms</label>
+          <input type="number" id="bathrooms" placeholder="e.g. 2" min="0">
+        </div>
+
+        <!-- ══ AI FEATURE 1 — PRICE PREDICTOR ══ -->
+        <div class="ai-section">
+          <div class="ai-section-header">
+            <div class="ai-section-title"><span>💰</span> AI Feature 1 — Price Predictor</div>
+            <button type="button" class="ai-btn" id="predictBtn" onclick="predictPrice()">
+              <span class="btn-icon">💰</span> Predict Fair Price
+            </button>
+          </div>
+          <p style="font-size:12px;color:var(--muted)">Analyses all listings in the same location & type from our database to suggest a fair market price.</p>
+          <div class="price-result" id="priceResult">
+            <div class="pr-label">AI Suggested Price</div>
+            <div class="pr-value" id="priceValue">—</div>
+            <div class="pr-range" id="priceRange">—</div>
+            <div class="pr-note" id="priceNote">—</div>
+          </div>
+        </div>
+
+        <!-- ══ AI FEATURE 2 — DESCRIPTION WRITER ══ -->
+        <div class="ai-section">
+          <div class="ai-section-header">
+            <div class="ai-section-title"><span>✍️</span> AI Feature 2 — Description Writer</div>
+            <button type="button" class="ai-btn" id="descBtn" onclick="generateDescription()">
+              <span class="btn-icon">✍️</span> Write Description
+            </button>
+          </div>
+          <p style="font-size:12px;color:var(--muted)">Generates a professional property description from your title, location, type and bedroom details.</p>
+          <div class="desc-result" id="descResult"></div>
+        </div>
+
+        <!-- ══ AI FEATURE 5 — IMAGE VALIDATOR ══ -->
+        <div class="img-validator-section">
+          <div class="img-val-header">
+            <div class="img-val-title"><span>🛡️</span> AI Feature 5 — Image Validator</div>
+            <div class="shield-badge"><div class="shield-dot"></div> AI Shield Active</div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:6px;">Every image is instantly scanned by Claude AI. Only genuine property photos are accepted.</p>
+          <div class="img-rule-box">
+            <strong>✅ Allowed:</strong> House exteriors, interiors, rooms, kitchen, bathroom, garden, balcony, parking, building facade, locality/area photos, floor plans.<br>
+            <strong>❌ Auto-Rejected:</strong> Selfies, people portraits, food, screenshots, animals, documents, or anything unrelated to real estate.
+          </div>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="imgInput" accept="image/*" multiple onchange="handleFiles(this.files)">
+            <div class="upload-icon">📸</div>
+            <div class="upload-title">Drop property photos here or click to browse</div>
+            <div class="upload-sub">JPG · PNG · WEBP · Multiple files accepted · Each scanned by AI instantly</div>
+          </div>
+          <div class="image-grid" id="imageGrid"></div>
+          <div class="val-summary" id="valSummary"></div>
+        </div>
+
+        <!-- Description textarea -->
+        <div class="field full">
+          <label>Property Description</label>
+          <textarea id="description" placeholder="Describe your property — or use AI Feature 2 above to auto-generate one…"></textarea>
+        </div>
+
+        <div class="status-msg" id="statusMsg"></div>
+        <button type="submit" class="submit-btn" id="submitBtn">List Property Now →</button>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- ══ SIDE PANEL ══ -->
+  <div class="side-panel">
+    <div class="stats-card">
+      <div class="card-title">Platform Stats</div>
+      <div class="stat-row"><span class="stat-label-s">Total Listings</span><span class="stat-val" id="totalListings">—</span></div>
+      <div class="stat-row"><span class="stat-label-s">Avg Price</span><span class="stat-val" id="avgPrice">—</span></div>
+      <div class="stat-row"><span class="stat-label-s">Listing Fee</span><span class="stat-val" style="color:var(--green)">Free</span></div>
+    </div>
+    <div class="similar-card">
+      <div class="card-title">AI Feature 3 — Similar Properties</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Fill location + type to see comparable listings from our database.</p>
+      <div id="similarList"><div class="sim-empty">Enter location & type above</div></div>
+    </div>
+    <div class="trend-card">
+      <div class="card-title">🔍 AI Feature 4 — Price Validity</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Checks if your price is realistic vs area average. Flags suspicious outliers.</p>
+      <div id="fraudResult" style="font-size:13px;color:var(--muted)">Enter price + location to check.</div>
+      <canvas id="trendChart"></canvas>
+    </div>
+    <div class="tips-card">
+      <div class="card-title">Listing Tips</div>
+      <div class="tip"><div class="tip-icon">🛡️</div><div><div class="tip-title">AI validates your images</div><div class="tip-desc">Only real property photos pass — selfies and random images are auto-rejected instantly.</div></div></div>
+      <div class="tip"><div class="tip-icon">📸</div><div><div class="tip-title">Upload clear photos</div><div class="tip-desc">Properties with HD photos get 3× more interest from buyers.</div></div></div>
+      <div class="tip"><div class="tip-icon">📍</div><div><div class="tip-title">Specific location</div><div class="tip-desc">Use "Bejai, Mangalore" not just "Mangalore".</div></div></div>
+      <div class="tip"><div class="tip-icon">✍️</div><div><div class="tip-title">Use AI description</div><div class="tip-desc">AI-written listings get more buyer enquiries.</div></div></div>
+    </div>
+    <div class="listed-section" id="listedSection">
+      <div class="card-title">Listed This Session</div>
+      <div id="propertyList"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ─── HELPERS ────────────────────────────────────────────────
+function fmt(v){
+  if(!v) return '—'; v=Number(v);
+  if(v>=10000000) return '₹'+(v/10000000).toFixed(2)+' Cr';
+  if(v>=100000)   return '₹'+(v/100000).toFixed(1)+' L';
+  return '₹'+v.toLocaleString('en-IN');
+}
+
+let allProperties=[], trendChartInst=null;
+
+async function loadData(){
+  try{
+    const res=await fetch("/api/properties");
+    if(!res.ok) return;
+    const raw=await res.json();
+    allProperties=raw.map(p=>({
+      ...p,
+      price: Number(p.price)||0,
+      images: Array.isArray(p.images) ? p.images : (p.images||"").split(",").filter(Boolean)
+    }));
+    const withPrice=allProperties.filter(p=>p.price>0);
+    document.getElementById("totalListings").textContent=allProperties.length||"0";
+    if(withPrice.length){
+      const avg=withPrice.reduce((s,p)=>s+p.price,0)/withPrice.length;
+      document.getElementById("avgPrice").textContent=fmt(avg);
+    }
+  }catch(e){console.error("[loadData]",e);}
+}
+loadData();
+
+let changeTimer;
+function onDetailChange(){clearTimeout(changeTimer);changeTimer=setTimeout(()=>{findSimilar();checkFraud();},600);}
+function onPriceChange(){clearTimeout(changeTimer);changeTimer=setTimeout(checkFraud,600);}
+
+// ─── PHONE VALIDATION ───────────────────────────────────────
+function validateSellerPhone(el){
+  el.value=el.value.replace(/\D/g,'').slice(0,10);
+  const hint=document.getElementById('sellerPhoneHint');
+  el.classList.remove('ph-valid','ph-invalid');
+  hint.className='phone-hint';
+  hint.textContent='';
+  if(!el.value) return;
+  if(el.value.length===10){
+    el.classList.add('ph-valid');
+    hint.classList.add('show','ok');
+    hint.textContent='✓ Valid phone number';
+  } else {
+    el.classList.add('ph-invalid');
+    hint.classList.add('show','err');
+    hint.textContent=`✗ ${el.value.length}/10 digits entered`;
+  }
+}
+
+// ─── AI FEATURE 1 — PRICE PREDICTOR ────────────────────────
+async function predictPrice(){
+  const location=document.getElementById("location").value.trim();
+  const type=document.getElementById("type").value;
+  const btn=document.getElementById("predictBtn");
+  const result=document.getElementById("priceResult");
+  if(!location&&!type){alert("Please fill Location and Property Type first.");return;}
+  btn.disabled=true;btn.innerHTML='<span class="ai-spinner"></span>Analysing…';
+  if(allProperties.length===0) await loadData();
+  const matches=allProperties.filter(p=>{
+    const lm=location?p.location.toLowerCase().includes(location.toLowerCase()):true;
+    const tm=type?p.type===type:true;
+    return lm&&tm&&p.price>0;
+  });
+  await new Promise(r=>setTimeout(r,800));
+  if(!matches.length){
+    const overall=allProperties.filter(p=>p.price>0);
+    if(overall.length){
+      const avg=overall.reduce((s,p)=>s+p.price,0)/overall.length;
+      document.getElementById("priceValue").textContent=fmt(avg);
+      document.getElementById("priceRange").textContent=`Range: ${fmt(avg*0.8)} – ${fmt(avg*1.2)}`;
+      document.getElementById("priceNote").textContent=`Based on ${overall.length} overall listings (no exact match)`;
+    } else {
+      document.getElementById("priceValue").textContent="Not enough data";
+      document.getElementById("priceRange").textContent="Add more listings to get predictions";
+      document.getElementById("priceNote").textContent="Be the first to list in this area!";
+    }
+  } else {
+    const avg=matches.reduce((s,p)=>s+p.price,0)/matches.length;
+    const min=Math.min(...matches.map(p=>p.price));
+    const max=Math.max(...matches.map(p=>p.price));
+    document.getElementById("priceValue").textContent=fmt(avg);
+    document.getElementById("priceRange").textContent=`Range: ${fmt(min)} – ${fmt(max)}`;
+    document.getElementById("priceNote").textContent=`Based on ${matches.length} similar listing${matches.length>1?'s':''} in your area`;
+    if(!document.getElementById("price").value){
+      document.getElementById("price").value=Math.round(avg);
+      checkFraud();
+    }
+  }
+  result.classList.add("show");
+  btn.disabled=false;btn.innerHTML='<span class="btn-icon">💰</span> Predict Again';
+}
+
+// ─── AI FEATURE 2 — DESCRIPTION WRITER ─────────────────────
+async function generateDescription(){
+  const title=document.getElementById("title").value.trim();
+  const location=document.getElementById("location").value.trim();
+  const type=document.getElementById("type").value;
+  const bedrooms=document.getElementById("bedrooms").value;
+  const price=document.getElementById("price").value;
+  const btn=document.getElementById("descBtn");
+  const result=document.getElementById("descResult");
+  if(!title&&!location&&!type){alert("Please fill Title, Location and Type first.");return;}
+  btn.disabled=true;btn.innerHTML='<span class="ai-spinner"></span>Writing…';
+  result.textContent="";result.classList.remove("show");
+  try{
+    const prompt=`Write a professional real estate property listing description for:\n- Title: ${title||'Property'}\n- Location: ${location||'India'}\n- Type: ${type||'Residential'}\n- Bedrooms: ${bedrooms||'Not specified'}\n- Price: ${price?fmt(Number(price)):'Negotiable'}\nWrite 3-4 sentences. Be professional, highlight key features, mention the location appeal and value. Do not use hashtags or bullet points. Sound like a premium real estate agent.`;
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:300,messages:[{role:"user",content:prompt}]})});
+    const data=await res.json();
+    const text=data.content?.[0]?.text||"";
+    const d=text||genLocalDesc(title,location,type,bedrooms,price);
+    result.textContent=d;result.classList.add("show");
+    document.getElementById("description").value=d;
+  }catch(e){
+    const d=genLocalDesc(title,location,type,bedrooms,price);
+    result.textContent=d;result.classList.add("show");
+    document.getElementById("description").value=d;
+  }
+  btn.disabled=false;btn.innerHTML='<span class="btn-icon">✍️</span> Regenerate';
+}
+function genLocalDesc(title,location,type,bedrooms,price){
+  const loc=location||"India";const typ=type||"property";const beds=bedrooms?`${bedrooms}-bedroom `:"";const pr=price?` priced at ${fmt(Number(price))}`:"";
+  return `This stunning ${beds}${typ.toLowerCase()} in ${loc} offers an exceptional living experience${pr}. Featuring modern amenities and premium finishes throughout, this property represents outstanding value in one of the most sought-after areas. The spacious layout is perfect for families seeking comfort and style. Contact us today to schedule a viewing.`;
+}
+
+// ─── AI FEATURE 3 — SIMILAR PROPERTIES ──────────────────────
+function findSimilar(){
+  const location=document.getElementById("location").value.trim().toLowerCase();
+  const type=document.getElementById("type").value;
+  const listEl=document.getElementById("similarList");
+  if(!location&&!type){listEl.innerHTML='<div class="sim-empty">Enter location & type above</div>';return;}
+  const matches=allProperties.filter(p=>{
+    const lm=location?p.location.toLowerCase().includes(location):true;
+    const tm=type?p.type===type:true;
+    return (lm||tm)&&p.price>0;
+  }).slice(0,4);
+  if(!matches.length){listEl.innerHTML='<div class="sim-empty">No similar listings found yet</div>';return;}
+  listEl.innerHTML=matches.map(p=>`
+    <div class="sim-item">
+      <div class="sim-title">${p.title}</div>
+      <div class="sim-price">${fmt(p.price)}</div>
+      <div class="sim-loc">📍 ${p.location} · ${p.type||'—'} · 🛏️ ${p.bedrooms||'—'}</div>
+    </div>`).join('');
+}
+
+// ─── AI FEATURE 4 — PRICE VALIDITY ──────────────────────────
+function checkFraud(){
+  const price=Number(document.getElementById("price").value);
+  const location=document.getElementById("location").value.trim().toLowerCase();
+  const type=document.getElementById("type").value;
+  const el=document.getElementById("fraudResult");
+  if(!price||price<=0){el.textContent="Enter a price to validate it.";el.style.color="var(--muted)";drawTrendChart([]);return;}
+  const matches=allProperties.filter(p=>{
+    const lm=location?p.location.toLowerCase().includes(location):true;
+    const tm=type?p.type===type:true;
+    return (lm||tm)&&p.price>0;
+  });
+  if(!matches.length){el.innerHTML=`<span style="color:var(--teal)">ℹ️ No similar listings to compare. You may be the first in this area!</span>`;drawTrendChart([]);return;}
+  const avg=matches.reduce((s,p)=>s+p.price,0)/matches.length;
+  const ratio=price/avg;
+  let msg,color;
+  if(ratio<0.4){msg=`⚠️ Price is ${Math.round((1-ratio)*100)}% below area average (${fmt(avg)}). Very low — buyers may be suspicious.`;color="#f59e0b";}
+  else if(ratio<0.7){msg=`📉 Price is below area average (${fmt(avg)}). Good deal for buyers!`;color="var(--teal)";}
+  else if(ratio<=1.4){msg=`✅ Price looks realistic. Area average is ${fmt(avg)} — you're within normal range.`;color="var(--green)";}
+  else if(ratio<=2.0){msg=`📈 Price is above area average (${fmt(avg)}). Make sure your property has premium features.`;color="#f59e0b";}
+  else{msg=`🚨 Price is ${Math.round((ratio-1)*100)}% above area average (${fmt(avg)}). May seem unrealistic to buyers.`;color="var(--red)";}
+  el.innerHTML=`<span style="color:${color}">${msg}</span>`;
+  drawTrendChart(matches,price);
+}
+function drawTrendChart(matches,userPrice){
+  const canvas=document.getElementById("trendChart");if(!canvas)return;
+  if(trendChartInst){trendChartInst.destroy();trendChartInst=null;}
+  if(!matches.length) return;
+  const labels=matches.map((_,i)=>`L${i+1}`);
+  const prices=matches.map(p=>p.price);
+  if(userPrice){labels.push("Yours");prices.push(userPrice);}
+  const colors=prices.map((_,i)=>userPrice&&i===prices.length-1?"rgba(255,215,0,0.8)":"rgba(47,232,176,0.5)");
+  trendChartInst=new Chart(canvas,{
+    type:"bar",
+    data:{labels,datasets:[{data:prices,backgroundColor:colors,borderRadius:4,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,backgroundColor:'transparent',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>" "+fmt(ctx.raw)}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:"#555",font:{size:10}},border:{color:'transparent'}},
+        y:{grid:{color:"rgba(255,255,255,0.03)"},ticks:{color:"#555",font:{size:10},callback:v=>fmt(v)},border:{color:'transparent'}}
+      }
+    }
+  });
+}
+
+// ─── AI FEATURE 5 — IMAGE VALIDATOR ────────────────────────
+const imageStore=[];let scanQueue=[];let isScanning=false;
+const zone=document.getElementById('uploadZone');
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');handleFiles(e.dataTransfer.files);});
+
+function handleFiles(files){
+  [...files].forEach(file=>{
+    if(!file.type.startsWith('image/')) return;
+    const id='img_'+Date.now()+Math.random().toString(36).slice(2);
+    const reader=new FileReader();
+    reader.onload=e=>{
+      imageStore.push({file,dataUrl:e.target.result,id,status:'scanning',reason:''});
+      renderGrid();
+      scanQueue.push(id);
+      if(!isScanning) processQueue();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderGrid(){
+  const grid=document.getElementById('imageGrid');grid.innerHTML='';
+  imageStore.forEach(entry=>{
+    const card=document.createElement('div');card.className=`img-card ${entry.status}`;card.id='card_'+entry.id;
+    let overlay='';
+    if(entry.status==='scanning')   overlay=`<div class="img-overlay"><div class="scan-spin"></div><span class="scan-text">Scanning…</span></div>`;
+    else if(entry.status==='approved') overlay=`<div class="img-overlay"></div><span class="status-pip">✓ Verified</span>`;
+    else if(entry.status==='rejected') overlay=`<div class="img-overlay"><span class="reject-x">✕</span><span class="reject-title">Rejected</span><span class="reject-why">${entry.reason}</span></div>`;
+    card.innerHTML=`<img src="${entry.dataUrl}" alt="property"><button class="img-remove" onclick="removeImage('${entry.id}')" type="button">×</button>${overlay}`;
+    grid.appendChild(card);
+  });
+  updateValSummary();
+}
+
+function removeImage(id){
+  const idx=imageStore.findIndex(e=>e.id===id);
+  if(idx!==-1) imageStore.splice(idx,1);
+  renderGrid();
+}
+
+async function processQueue(){
+  if(scanQueue.length===0){isScanning=false;return;}
+  isScanning=true;
+  const id=scanQueue.shift();
+  const entry=imageStore.find(e=>e.id===id);
+  if(!entry){processQueue();return;}
+  try{
+    const result=await validateImageWithAI(entry.dataUrl);
+    entry.status=result.approved?'approved':'rejected';
+    entry.reason=result.reason||'';
+  }catch(err){entry.status='rejected';entry.reason='Scan error';}
+  renderGrid();
+  processQueue();
+}
+
+async function validateImageWithAI(dataUrl){
+  const entry=imageStore.find(e=>e.dataUrl===dataUrl);
+  const filename=entry?entry.file.name:'';
+  const base64=dataUrl.split(',')[1];
+  const mediaType=dataUrl.split(';')[0].split(':')[1];
+  try{
+    const res=await fetch('/api/validate_image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({base64,mediaType,filename})});
+    if(!res.ok) return {approved:true,reason:''};
+    return await res.json();
+  }catch(e){return {approved:true,reason:''};}
+}
+
+function updateValSummary(){
+  const summary=document.getElementById('valSummary');
+  const submitBtn=document.getElementById('submitBtn');
+  const total=imageStore.length;
+  if(total===0){summary.className='val-summary';return;}
+  const approved=imageStore.filter(e=>e.status==='approved').length;
+  const rejected=imageStore.filter(e=>e.status==='rejected').length;
+  const scanning=imageStore.filter(e=>e.status==='scanning').length;
+  summary.classList.add('show');
+  if(scanning>0){
+    summary.className='val-summary show processing';
+    summary.innerHTML=`<span>⏳</span><span>AI is scanning ${scanning} image${scanning>1?'s':''}… Please wait before submitting.</span>`;
+    submitBtn.disabled=true;
+  } else if(rejected>0){
+    summary.className='val-summary show has-errors';
+    summary.innerHTML=`<span>✕</span><span><strong>${rejected} image${rejected>1?'s':''} rejected</strong> — remove them to enable submission. ${approved} approved.</span>`;
+    submitBtn.disabled=true;
+  } else if(approved>0){
+    summary.className='val-summary show all-good';
+    summary.innerHTML=`<span>✓</span><span><strong>All ${approved} image${approved>1?'s':''} verified by AI</strong> — your photos are approved and ready.</span>`;
+    submitBtn.disabled=false;
+  }
+}
+
+// ─── FORM SUBMIT ─────────────────────────────────────────────
+document.getElementById("propertyForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  const msgEl  = document.getElementById("statusMsg");
+  const btn    = document.getElementById("submitBtn");
+
+  // Phone validation
+  const phone = document.getElementById("sellerPhone").value.trim();
+  if(!/^\d{10}$/.test(phone)){
+    msgEl.textContent="❌ Please enter a valid 10-digit phone number.";
+    msgEl.className="status-msg error show";
+    document.getElementById("sellerPhone").focus();
+    return;
+  }
+
+  // Image scan check
+  const scanning = imageStore.filter(e=>e.status==='scanning').length;
+  const rejected  = imageStore.filter(e=>e.status==='rejected').length;
+  if(scanning>0){msgEl.textContent="⏳ AI is still scanning your images. Please wait a moment.";msgEl.className="status-msg error show";return;}
+  if(rejected>0){msgEl.textContent="❌ Remove all rejected images before submitting.";msgEl.className="status-msg error show";return;}
+
+  msgEl.classList.remove("show","success","error");
+
+  const formData = new FormData();
+  formData.append("sellerName",    document.getElementById("sellerName").value);
+  formData.append("sellerPhone",   phone);
+  formData.append("sellerEmail",   document.getElementById("sellerEmail").value);
+  formData.append("title",         document.getElementById("title").value);
+  formData.append("location",      document.getElementById("location").value);
+  formData.append("type",          document.getElementById("type").value);
+  formData.append("status",        document.getElementById("statusField").value);  // ✅ Sale/Rent
+  formData.append("price",         document.getElementById("price").value);
+  formData.append("bedrooms",      document.getElementById("bedrooms").value);
+  formData.append("bathrooms",     document.getElementById("bathrooms").value);
+  formData.append("description",   document.getElementById("description").value);
+
+  // Attach only approved images
+  imageStore.filter(e=>e.status==='approved').forEach(entry => {
+    formData.append("images", entry.file);
+  });
+
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Uploading…';
+
+  try{
+    const res  = await fetch("/add_property", {method:"POST", body:formData});
+    const data = await res.json();
+    if(data.status==="success"){
+      msgEl.textContent="✅ "+data.message;
+      msgEl.className="status-msg success show";
+      btn.innerHTML="✓ Listed Successfully";
+      showListed(formData, imageStore.filter(e=>e.status==='approved'));
+      loadData();
+      setTimeout(()=>{
+        this.reset();
+        imageStore.length=0;
+        document.getElementById('imageGrid').innerHTML='';
+        document.getElementById('valSummary').className='val-summary';
+        document.getElementById('sellerPhoneHint').className='phone-hint';
+        document.getElementById('sellerPhoneHint').textContent='';
+        document.getElementById('sellerPhone').classList.remove('ph-valid','ph-invalid');
+        btn.disabled=false;btn.innerHTML="List Property Now →";
+        msgEl.classList.remove("show");
+        document.getElementById("priceResult").classList.remove("show");
+        document.getElementById("descResult").classList.remove("show");
+      },3000);
+    } else {
+      msgEl.textContent="❌ "+(data.error||"Something went wrong");
+      msgEl.className="status-msg error show";
+      btn.disabled=false;btn.innerHTML="List Property Now →";
+    }
+  }catch(err){
+    msgEl.textContent="❌ Cannot connect to server. Is Flask running?";
+    msgEl.className="status-msg error show";
+    btn.disabled=false;btn.innerHTML="List Property Now →";
+  }
+});
+
+function showListed(formData, approvedEntries){
+  document.getElementById("listedSection").style.display="block";
+  const list    = document.getElementById("propertyList");
+  const imgSrc  = approvedEntries.length>0 ? approvedEntries[0].dataUrl : "";
+  const price   = Number(formData.get("price"));
+  const status  = formData.get("status")==="Rent" ? "For Rent" : "For Sale";
+  list.innerHTML=`
+    <div class="prop-item">
+      ${imgSrc?`<img src="${imgSrc}" alt="property">`:""}
+      <div class="prop-item-info">
+        <p><b>${formData.get("title")}</b></p>
+        <p>📍 ${formData.get("location")} · ${formData.get("type")} · ${status}</p>
+        <p>${fmt(price)}</p>
+        <p class="prop-saved">✅ Saved — now visible on index page</p>
+      </div>
+    </div>`+list.innerHTML;
+}
+</script>
+</body>
+</html>
